@@ -1,10 +1,10 @@
 {
   "catalog": {
-    "uuid": "0d72484e-830a-5de4-95f2-a3199a38cc99",
+    "uuid": "03d5bcc7-8af0-50ca-8a5a-5f963fb91667",
     "metadata": {
       "title": "NIST AI Risk Management Framework: full catalog (community OSCAL)",
-      "last-modified": "2026-05-10T09:00:51.000Z",
-      "version": "0.2.0",
+      "last-modified": "2026-05-10T11:06:52.000Z",
+      "version": "0.3.0",
       "oscal-version": "1.2.2",
       "parties": [
         {
@@ -540,6 +540,12 @@
                     "value": "AI Actor Training",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp-3.4",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -862,6 +868,12 @@
                     "name": "ai-rmf-topic",
                     "value": "Impact Assessment",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
                   }
                 ]
               },
@@ -1363,6 +1375,12 @@
                     "name": "ai-rmf-topic",
                     "value": "Fairness and Bias",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv",
+                    "rel": "related"
                   }
                 ]
               },
@@ -2103,6 +2121,12 @@
                     "value": "Human oversight",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv",
+                    "rel": "related"
+                  }
                 ]
               }
             ]
@@ -2557,6 +2581,12 @@
                     "value": "Fairness and Bias",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -2628,6 +2658,16 @@
                     "name": "ai-rmf-topic",
                     "value": "Context of Use",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-4.3",
+                    "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
                   }
                 ]
               },
@@ -2715,6 +2755,16 @@
                     "name": "ai-rmf-topic",
                     "value": "Context of Use",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv",
+                    "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.2",
+                    "rel": "related"
                   }
                 ]
               }
@@ -2948,6 +2998,12 @@
                     "value": "Drift",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -3087,6 +3143,12 @@
                     "value": "Context of Use",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -3169,6 +3231,12 @@
                     "value": "Risky Emergent Behavior",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -3240,6 +3308,16 @@
                     "name": "ai-rmf-topic",
                     "value": "Trustworthy Characteristics",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-2.9",
+                    "rel": "related"
                   }
                 ]
               },
@@ -3318,6 +3396,12 @@
                     "value": "Trustworthy Characteristics",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -3394,6 +3478,12 @@
                     "name": "ai-rmf-topic",
                     "value": "Trustworthy Characteristics",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
                   }
                 ]
               },
@@ -3477,6 +3567,12 @@
                     "value": "Trustworthy Characteristics",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -3544,6 +3640,12 @@
                     "value": "Environmental Impact",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -3600,6 +3702,12 @@
                     "name": "ai-rmf-topic",
                     "value": "Effectiveness",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-ms-2.1",
+                    "rel": "related"
                   }
                 ]
               }
@@ -3739,6 +3847,12 @@
                     "value": "Continual Improvement",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -3815,6 +3929,12 @@
                     "name": "ai-rmf-topic",
                     "value": "Impact Assessment",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-4.1",
+                    "rel": "related"
                   }
                 ]
               }
@@ -3901,6 +4021,20 @@
                     "name": "ai-rmf-topic",
                     "value": "Context of Use",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-5.1",
+                    "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.6",
+                    "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-3.3",
+                    "rel": "related"
                   }
                 ]
               },
@@ -4009,6 +4143,12 @@
                     "value": "Fairness and Bias",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-ms-2.5",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -4115,6 +4255,16 @@
                     "name": "ai-rmf-topic",
                     "value": "Fairness and Bias",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-ms-2.5",
+                    "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.1",
+                    "rel": "related"
                   }
                 ]
               }
@@ -4303,6 +4453,12 @@
                     "value": "Risk Tolerance",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp",
+                    "rel": "related"
+                  }
                 ]
               },
               {
@@ -4354,6 +4510,16 @@
                     "name": "ai-rmf-topic",
                     "value": "Risk Response",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-1.3",
+                    "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-3.4",
+                    "rel": "related"
                   }
                 ]
               }
@@ -4606,6 +4772,12 @@
                     "name": "ai-rmf-topic",
                     "value": "Risky Emergent Behavior",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.7",
+                    "rel": "related"
                   }
                 ]
               }

@@ -31,7 +31,8 @@ from airmf_core_text import (  # noqa: E402
     ALL_CATEGORIES, ALL_SUBCATEGORIES, FUNCTION_PREFIXES_FALLBACK,
 )
 
-CATALOG_PATH = REPO / "catalogs" / "ai-rmf-v0.2.json"
+CATALOG_PATH = REPO / "catalogs" / "ai-rmf-v0.3.json"
+PROFILE_PATH = REPO / "profiles" / "ai-rmf-baseline-profile.json"
 
 NS = "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
 
@@ -185,6 +186,85 @@ def main() -> int:
     if len(all_control_ids) != expected_total:
         failures.append(f"expected {expected_total} controls total, found {len(all_control_ids)}")
 
+    # Cross-reference links: every href in a control's links[] must resolve
+    # to a real ID in the catalog (function group, category group, or
+    # control). Self-references must be absent.
+    valid_ids: set[str] = set()
+    for fg in function_groups:
+        valid_ids.add(fg.get("id", ""))
+        for cg in fg.get("groups", []):
+            valid_ids.add(cg.get("id", ""))
+            for c in cg.get("controls", []):
+                valid_ids.add(c.get("id", ""))
+    valid_ids.discard("")
+
+    total_links = 0
+    controls_with_links = 0
+    for fg in function_groups:
+        for cg in fg.get("groups", []):
+            own_function_id = fg.get("id")
+            own_category_id = cg.get("id")
+            for c in cg.get("controls", []):
+                cid = c.get("id")
+                links = c.get("links") or []
+                if links:
+                    controls_with_links += 1
+                for link in links:
+                    href = link.get("href", "")
+                    if not href.startswith("#"):
+                        failures.append(
+                            f"{cid}: link href {href!r} must start with '#' (internal fragment)"
+                        )
+                        continue
+                    target_id = href[1:]
+                    if target_id not in valid_ids:
+                        failures.append(f"{cid}: link href {href!r} does not resolve to any ID in catalog")
+                    if target_id in {cid, own_function_id, own_category_id}:
+                        failures.append(f"{cid}: link href {href!r} is self-reference, should be removed")
+                    if not link.get("rel"):
+                        failures.append(f"{cid}: link missing 'rel' attribute")
+                    total_links += 1
+
+    # Profile completeness: must exist, must import the catalog by UUID,
+    # the import UUID must match a back-matter resource UUID, and the
+    # resource rlinks must include the expected catalog href.
+    if not PROFILE_PATH.exists():
+        failures.append(f"profile missing: {PROFILE_PATH}")
+    else:
+        with PROFILE_PATH.open() as f:
+            profile_doc = json.load(f)
+        profile = profile_doc.get("profile", {})
+
+        imports = profile.get("imports", [])
+        if len(imports) != 1:
+            failures.append(f"profile expected 1 import, found {len(imports)}")
+
+        import_href = imports[0].get("href", "") if imports else ""
+        if not import_href.startswith("#"):
+            failures.append(
+                f"profile import href {import_href!r} should be a fragment ref to a back-matter resource"
+            )
+
+        if imports and "include-all" not in imports[0] and "include-controls" not in imports[0]:
+            failures.append("profile import must declare include-all or include-controls")
+
+        bm_resources = profile.get("back-matter", {}).get("resources", []) or []
+        catalog_resource_uuid = import_href[1:] if import_href.startswith("#") else None
+        catalog_resource = next((r for r in bm_resources if r.get("uuid") == catalog_resource_uuid), None)
+        if catalog_resource is None:
+            failures.append(
+                f"profile back-matter resource {catalog_resource_uuid!r} not found "
+                f"(import href does not resolve)"
+            )
+        else:
+            rlinks = catalog_resource.get("rlinks") or []
+            hrefs = [r.get("href", "") for r in rlinks]
+            if not any(h.endswith("ai-rmf-v0.3.json") for h in hrefs):
+                failures.append(
+                    f"profile back-matter resource rlinks should include ai-rmf-v0.3.json target; "
+                    f"got {hrefs!r}"
+                )
+
     if failures:
         print(f"FAIL completeness: {len(failures)} issue(s)")
         for f in failures:
@@ -194,7 +274,9 @@ def main() -> int:
     print(
         f"OK completeness: {expected_total} controls across "
         f"{sum(len(c) for c in ALL_CATEGORIES.values())} categories in 4 functions; "
-        f"all statements match Core verbatim; all custom parts have ns"
+        f"{total_links} cross-ref links across {controls_with_links} controls all resolve; "
+        f"baseline profile imports catalog cleanly; all statements match Core verbatim; "
+        f"all custom parts have ns"
     )
     return 0
 

@@ -7,6 +7,38 @@ catalog version follows [Semantic Versioning](https://semver.org/) where
 and "PATCH" tracks corrections that do not change the set of controls or
 their statement text.
 
+## [0.3.0] - 2026-05-10
+
+### Added
+- Control-to-control cross-reference `links` extracted from both Core
+  statement text and Playbook implementation guidance. 31 links across
+  24 of 72 controls. Patterns recognised: "the {function} function",
+  "{Function} N.M" subcategory references, and "{Function} N" category
+  references. Self-references are dropped. Source: `src/cross_references.py`.
+- Worked example profile at `profiles/ai-rmf-baseline-profile.json`.
+  Imports the v0.3 catalog by back-matter resource UUID, selects all
+  72 controls with `include-all`, merges as-is. Profile generator at
+  `src/profile_generator.py` produces it deterministically.
+- OSCAL profile JSON schema (v1.2.2) vendored at
+  `schemas/oscal_profile_schema.json`.
+- npm scripts split: `validate-catalog`, `validate-profile`, and a
+  combined `validate` running both. CI workflow updated to validate
+  both artifacts and to verify generator output (catalog + profile)
+  is committed and reproducible.
+- Completeness check extended: cross-reference links must resolve to
+  real IDs in the catalog (function group, category group, or control)
+  and must not be self-references; profile imports must declare
+  `include-all` or `include-controls`; profile back-matter resource
+  must include an rlink to the v0.3 catalog file.
+
+### Changed
+- Catalog filename: `catalogs/ai-rmf-v0.2.json` → `catalogs/ai-rmf-v0.3.json`.
+  v0.2 history remains in git for reference.
+- README: added "Using this catalog in OSCAL profiles" section,
+  updated coverage table, OSCAL structure diagram, and limitations
+  list to reflect what v0.3 actually delivers (links present,
+  parameters intentionally absent).
+
 ## [0.2.0] - 2026-05-10
 
 ### Added

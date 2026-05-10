@@ -34,10 +34,11 @@ from airmf_core_text import (
     MEASURE_CATEGORIES, MEASURE_SUBCATEGORIES,
     MANAGE_CATEGORIES, MANAGE_SUBCATEGORIES,
 )
+from cross_references import extract_links
 
 REPO = Path(__file__).resolve().parent.parent
 SOURCE_PATH = REPO / "source" / "ai-rmf-playbook.json"
-OUTPUT_PATH = REPO / "catalogs" / "ai-rmf-v0.2.json"
+OUTPUT_PATH = REPO / "catalogs" / "ai-rmf-v0.3.json"
 
 NS = "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
 NAMESPACE_OID = uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8")  # url namespace per RFC 4122
@@ -119,6 +120,9 @@ def make_control(item: dict) -> dict:
     props = make_props(item.get("AI Actors"), item.get("Topic"))
     if props:
         control["props"] = props
+    links = extract_links(item, function_upper, control_id)
+    if links:
+        control["links"] = links
     return control
 
 
@@ -208,11 +212,11 @@ def build_catalog(playbook: list) -> dict:
     nist_party_uuid = stable_uuid("party:nist")
 
     catalog = {
-        "uuid": stable_uuid("catalog:ai-rmf-v0.2"),
+        "uuid": stable_uuid("catalog:ai-rmf-v0.3"),
         "metadata": {
             "title": "NIST AI Risk Management Framework: full catalog (community OSCAL)",
             "last-modified": "PLACEHOLDER",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "oscal-version": "1.2.2",
             "parties": [
                 {
@@ -300,15 +304,20 @@ def main() -> int:
 
     function_groups = catalog["catalog"]["groups"]
     total_categories = sum(len(fg.get("groups", [])) for fg in function_groups)
-    total_controls = sum(
-        len(cg.get("controls", []))
+    all_controls = [
+        c
         for fg in function_groups
         for cg in fg.get("groups", [])
-    )
+        for c in cg.get("controls", [])
+    ]
+    total_controls = len(all_controls)
+    total_links = sum(len(c.get("links") or []) for c in all_controls)
+    controls_with_links = sum(1 for c in all_controls if c.get("links"))
     print(f"wrote {OUTPUT_PATH}")
     print(f"  function groups: {len(function_groups)}")
     print(f"  category groups: {total_categories}")
     print(f"  controls:        {total_controls}")
+    print(f"  cross-ref links: {total_links} across {controls_with_links} controls")
     print(f"  last-modified:   {catalog['catalog']['metadata']['last-modified']}")
     return 0
 

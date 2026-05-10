@@ -51,10 +51,10 @@ Compliance work cites the Core, so this catalog uses Core wording for control st
 
 | AI RMF function | Categories | Subcategories | Status |
 |---|---|---|---|
-| GOVERN | 6 | 19 | v0.2 (this release) |
-| MAP | 5 | 18 | v0.2 (this release) |
-| MEASURE | 4 | 22 | v0.2 (this release) |
-| MANAGE | 4 | 13 | v0.2 (this release) |
+| GOVERN | 6 | 19 | v0.3 (this release) |
+| MAP | 5 | 18 | v0.3 (this release) |
+| MEASURE | 4 | 22 | v0.3 (this release) |
+| MANAGE | 4 | 13 | v0.3 (this release) |
 | **Total** | **19** | **72** | — |
 
 ## OSCAL structure
@@ -64,15 +64,39 @@ catalog
 └── groups (4 function groups: GOVERN / MAP / MEASURE / MANAGE)
     └── groups (19 category groups: GOVERN-1 .. MANAGE-4)
         └── controls (72 subcategory controls: GOVERN 1.1 .. MANAGE 4.3)
+            ├── parts (statement + 4 guidance parts)
+            ├── props (AI Actors and Topics from Playbook)
+            └── links (cross-references to other functions / categories / controls)
 ```
 
 Each control carries five parts: `statement` (Core verbatim), `guidance` (Playbook section_about), `ai-rmf-suggested-actions` (Playbook section_actions), `ai-rmf-documentation-questions` (Playbook section_doc), `ai-rmf-references` (Playbook section_ref). The four custom-named parts use a project namespace so consumers can recognise them as local extensions.
 
-## Limitations (v0.2)
+24 of 72 controls (mostly under MEASURE) have explicit cross-reference `links` extracted from the AI RMF text where one subcategory references another (for example, MEASURE 2.4 says "as identified in the map function" and links to the MAP function group). 31 cross-reference links total. See `src/cross_references.py` for the extraction rules.
+
+## Using this catalog in OSCAL profiles
+
+The repository ships a worked example profile at [`profiles/ai-rmf-baseline-profile.json`](profiles/ai-rmf-baseline-profile.json). It imports the v0.3 catalog and selects all 72 controls with `include-all`. Downstream profiles can derive narrower selections by replacing `include-all` with `include-controls` (positive selection) or by adding `exclude-controls` to drop subcategories that are out of scope.
+
+To validate the profile locally:
+
+```
+npm run validate-profile
+```
+
+Or both catalog and profile in one shot:
+
+```
+npm run validate
+```
+
+Anyone is welcome to fork and publish their own profile; the catalog is intentionally neutral so that sector-specific or regulator-specific tailoring stays out of the catalog itself.
+
+## Limitations (v0.3)
 
 - **Custom part names with explicit ns.** The Playbook structure includes content (suggested actions, documentation questions, references) that does not map cleanly onto the OSCAL standard part vocabulary. We use namespaced custom part names so consumers can recognise these as local extensions.
 - **Group `class="ai-rmf-function"` and `class="ai-rmf-category"` are non-standard.** OSCAL does not prescribe class values; we chose these for clarity over fidelity to NIST 800-53 conventions like `class="family"`.
-- **No control-to-control links yet.** AI RMF subcategories often reference one another implicitly (e.g., MEASURE subcategories cite "as identified in the map function"); v0.2 does not yet model these as OSCAL `links`. Planned for v0.3.
+- **Cross-reference links cover only explicit textual references.** The extractor in `src/cross_references.py` finds 31 links across 24 controls — patterns like "the map function" or "Govern 1.5". Implicit semantic relationships (e.g., MEASURE subcategories that conceptually depend on MAP outputs but do not say so in the Core text) are not modeled. v0.4 may add an LLM-assisted second pass with human review for these.
+- **No parameters (`params`).** AI RMF Core has no explicit parameters. Adding opinionated params (e.g., risk_tolerance_level) would compromise catalog neutrality; we leave parameter introduction to downstream profiles.
 - **Single maintainer.** This is a one-person community contribution at present. PRs and issues welcome.
 
 ## Validating the catalog
@@ -81,7 +105,7 @@ Each control carries five parts: `statement` (Core verbatim), `guidance` (Playbo
 python3 src/validate.py
 ```
 
-Validates `catalogs/ai-rmf-v0.2.json` against the official OSCAL v1.2.2 catalog JSON schema. Uses ajv-cli + ajv-formats under the hood (run `npm install` first).
+Validates `catalogs/ai-rmf-v0.3.json` against the official OSCAL v1.2.2 catalog JSON schema. Uses ajv-cli + ajv-formats under the hood (run `npm install` first).
 
 ## Regenerating the catalog
 
@@ -89,7 +113,7 @@ Validates `catalogs/ai-rmf-v0.2.json` against the official OSCAL v1.2.2 catalog 
 python3 src/generator.py
 ```
 
-Reads `source/ai-rmf-playbook.json` and the verbatim Core constants in `src/airmf_core_text.py`, writes `catalogs/ai-rmf-v0.2.json`. The generator preserves `last-modified` if substantive content is byte-identical to the prior catalog.
+Reads `source/ai-rmf-playbook.json` and the verbatim Core constants in `src/airmf_core_text.py`, writes `catalogs/ai-rmf-v0.3.json`. The generator preserves `last-modified` if substantive content is byte-identical to the prior catalog.
 
 ## Completeness check
 
@@ -110,8 +134,9 @@ Re-fetches the AI RMF Core HTML rendering and diffs the embedded constants for a
 ## Roadmap
 
 - v0.1 (2026-05-10, superseded): GOVERN function only, 19 controls, schema-validated.
-- v0.2 (this release, 2026-05-10): all four functions, 72 controls, full Playbook-vs-Core divergence inventory.
-- v0.3 (planned): control-to-control `links` for explicit cross-references between subcategories that AI RMF text relates ("as identified in the map function" etc.). OSCAL Team review feedback incorporated if any received.
+- v0.2 (2026-05-10, superseded): all four functions, 72 controls, full Playbook-vs-Core divergence inventory.
+- v0.3 (this release, 2026-05-10): control-to-control `links` for explicit cross-references (31 links across 24 controls). Worked example profile (`profiles/ai-rmf-baseline-profile.json`) imports the catalog with `include-all`. Profile schema validation added to CI.
+- v0.4 (planned): LLM-assisted second pass on implicit cross-references that the regex extractor misses, with human review. OSCAL Team review feedback incorporated if any received.
 - v1.0: stable, declared compatible with at least one OSCAL Team-published reference profile.
 
 ## Contributing
@@ -130,7 +155,7 @@ Adam Lin (`adam@agentthreatrule.org`). This catalog is a personal community cont
 
 ## Abandonment criteria
 
-This catalog is maintained on a best-effort community basis. If schema validation or completeness checks regress on more than one control after generator changes, work pauses until the regression is understood and reverted. v0.2 commits to a shippable state of all 72 controls passing schema validation and completeness checks.
+This catalog is maintained on a best-effort community basis. If schema validation or completeness checks regress on more than one control after generator changes, work pauses until the regression is understood and reverted. v0.3 commits to a shippable state of all 72 controls passing catalog schema validation, profile schema validation, completeness checks (including link resolution and profile import resolution), and upstream drift detection.
 
 ## Acknowledgments
 

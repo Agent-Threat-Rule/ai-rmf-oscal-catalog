@@ -1,11 +1,13 @@
 {
   "name": "ai-rmf-oscal-catalog",
-  "version": "0.1.0",
-  "description": "Tooling deps for OSCAL schema validation of AI RMF catalog",
+  "version": "0.3.0",
+  "description": "Tooling deps for OSCAL schema validation of AI RMF catalog and example profile",
   "private": true,
   "license": "CC0-1.0",
   "scripts": {
-    "validate": "ajv validate -s schemas/oscal_catalog_schema.json -d catalogs/ai-rmf-v0.2.json -c ajv-formats --strict=false --spec=draft7"
+    "validate-catalog": "ajv validate -s schemas/oscal_catalog_schema.json -d catalogs/ai-rmf-v0.3.json -c ajv-formats --strict=false --spec=draft7",
+    "validate-profile": "ajv validate -s schemas/oscal_profile_schema.json -d profiles/ai-rmf-baseline-profile.json -c ajv-formats --strict=false --spec=draft7",
+    "validate": "npm run validate-catalog && npm run validate-profile"
   },
   "devDependencies": {
     "ajv-cli": "^5.0.0",
