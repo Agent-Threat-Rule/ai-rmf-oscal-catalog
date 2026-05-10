@@ -33,8 +33,8 @@ Highlights:
 
 - **GOVERN 3.1** — Playbook: `"Decision-makings ..."` vs Core: `"Decision-making ..."` (typo)
 - **GOVERN 5.2** — Playbook: `"Mechanisms are established to enable AI actors ..."` vs Core: `"Mechanisms are established to enable the team that developed or deployed AI systems ..."` (semantic divergence — different stakeholder set in AI RMF terminology)
-- **MAP function references** — Playbook capitalises "MAP function" / "MEASURE function" while Core uses lower-case "map function" / "measure function" (7 subcategories affected)
-- 32 additional minor variations in punctuation, conjunctions, pluralisation, "and practices" wording, hyphenation
+- **Function-name references** — Playbook capitalises "MAP function" / "MEASURE function" / "GOVERN function" while Core uses lower-case "map function" / "measure function" / "govern function" (8 subcategories drift on this alone, with 4 more controls affected as part of mixed-wording changes — 12 controls total per systemic finding S-1 in [`source/PLAYBOOK_REMEDIATION_PROPOSALS.md`](source/PLAYBOOK_REMEDIATION_PROPOSALS.md))
+- 31 additional minor variations in punctuation, conjunctions, pluralisation, "and practices" wording, hyphenation, whitespace
 
 Per-function breakdown:
 

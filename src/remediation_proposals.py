@@ -121,7 +121,10 @@ PROPOSALS: dict[str, dict] = {
         "severity": 3,
         "recommendation": "adopt-core",
         "patch": (
-            "Replace 'AI actors' with 'the team that developed or deployed AI systems'."
+            "Replace the FIRST occurrence of 'AI actors' with 'the team that developed "
+            "or deployed AI systems'. The second occurrence ('from relevant AI actors' "
+            "later in the sentence) is unchanged in Core and must be preserved — a "
+            "global find-replace would corrupt it."
         ),
         "rationale": (
             "Substantive divergence. Core narrows the obligated party to the team that "
@@ -227,8 +230,8 @@ PROPOSALS: dict[str, dict] = {
         "patch": "Replace 'GOVERN function' with 'the govern function' (lowercase, with article).",
         "rationale": (
             "Function-name casing. Core uses lowercase 'govern function' with the definite "
-            "article. See systemic finding S-1 — this is the same pattern as the seven "
-            "MEASURE-function references."
+            "article. See systemic finding S-1 — same pattern as the function-name casing "
+            "instances in MEASURE and MANAGE controls (12 controls touched in total)."
         ),
     },
     "MAP-4.1": {

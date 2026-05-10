@@ -66,7 +66,7 @@ These are patterns that span multiple controls and would be better addressed by 
 - **Severity:** 3
 - **Recommendation:** `adopt-core`
 - **Control statement (Core):** Mechanisms are established to enable the team that developed or deployed AI systems to regularly incorporate adjudicated feedback from relevant AI actors into system design and implementation.
-- **Patch:** Replace 'AI actors' with 'the team that developed or deployed AI systems'.
+- **Patch:** Replace the FIRST occurrence of 'AI actors' with 'the team that developed or deployed AI systems'. The second occurrence ('from relevant AI actors' later in the sentence) is unchanged in Core and must be preserved — a global find-replace would corrupt it.
 - **Rationale:** Substantive divergence. Core narrows the obligated party to the team that developed or deployed AI systems; Playbook generalises to all 'AI actors' (which in AI RMF terminology includes users, regulators, and impacted communities). The two sets are not interchangeable. Compliance work that cites Playbook would assign the obligation to the wrong actors.
 
 ## Severity 2 — Typo and systemic capitalisation
@@ -359,7 +359,7 @@ These are patterns that span multiple controls and would be better addressed by 
 - **Recommendation:** `adopt-core`
 - **Control statement (Core):** Processes for human oversight are defined, assessed, and documented in accordance with organizational policies from the govern function.
 - **Patch:** Replace 'GOVERN function' with 'the govern function' (lowercase, with article).
-- **Rationale:** Function-name casing. Core uses lowercase 'govern function' with the definite article. See systemic finding S-1 — this is the same pattern as the seven MEASURE-function references.
+- **Rationale:** Function-name casing. Core uses lowercase 'govern function' with the definite article. See systemic finding S-1 — same pattern as the function-name casing instances in MEASURE and MANAGE controls (12 controls touched in total).
 
 ### MAP-4.1
 
