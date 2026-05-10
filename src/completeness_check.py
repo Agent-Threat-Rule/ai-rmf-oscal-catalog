@@ -1,5 +1,5 @@
 """
-Completeness check for the v0.2 full catalog (all 4 AI RMF functions).
+Completeness check for the v0.4 full catalog (all 4 AI RMF functions).
 
 Asserts:
 - Catalog has 4 top-level function groups (GOVERN, MAP, MEASURE, MANAGE),
@@ -31,8 +31,17 @@ from airmf_core_text import (  # noqa: E402
     ALL_CATEGORIES, ALL_SUBCATEGORIES, FUNCTION_PREFIXES_FALLBACK,
 )
 
-CATALOG_PATH = REPO / "catalogs" / "ai-rmf-v0.3.json"
-PROFILE_PATH = REPO / "profiles" / "ai-rmf-baseline-profile.json"
+CATALOG_PATH = REPO / "catalogs" / "ai-rmf-v0.4.json"
+
+# Profiles validated. Each tuple: (filename, expected_selection_kind, expected_size).
+# expected_selection_kind: "include-all" or "include-controls".
+# expected_size: total controls in scope (72 for include-all; explicit count for include-controls).
+PROFILES = [
+    ("ai-rmf-baseline-profile.json", "include-all", 72),
+    ("ai-rmf-tier-1-foundational-profile.json", "include-controls", 18),
+    ("ai-rmf-tier-2-customer-facing-profile.json", "include-controls", 55),
+    ("ai-rmf-tier-3-high-risk-profile.json", "include-all", 72),
+]
 
 NS = "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
 
@@ -225,44 +234,88 @@ def main() -> int:
                         failures.append(f"{cid}: link missing 'rel' attribute")
                     total_links += 1
 
-    # Profile completeness: must exist, must import the catalog by UUID,
-    # the import UUID must match a back-matter resource UUID, and the
-    # resource rlinks must include the expected catalog href.
-    if not PROFILE_PATH.exists():
-        failures.append(f"profile missing: {PROFILE_PATH}")
-    else:
-        with PROFILE_PATH.open() as f:
+    # Profile completeness: each profile must exist, must import the catalog
+    # by UUID, the import UUID must match a back-matter resource UUID, the
+    # resource rlinks must include the expected catalog href, and (for
+    # include-controls profiles) the listed control IDs must all resolve to
+    # real controls in the catalog with the expected count.
+    valid_control_ids = {cid for cid in all_control_ids}
+
+    for filename, expected_selection, expected_size in PROFILES:
+        profile_path = REPO / "profiles" / filename
+        if not profile_path.exists():
+            failures.append(f"profile missing: {profile_path}")
+            continue
+        with profile_path.open() as f:
             profile_doc = json.load(f)
         profile = profile_doc.get("profile", {})
 
         imports = profile.get("imports", [])
         if len(imports) != 1:
-            failures.append(f"profile expected 1 import, found {len(imports)}")
+            failures.append(f"{filename}: expected 1 import, found {len(imports)}")
+            continue
 
-        import_href = imports[0].get("href", "") if imports else ""
+        import_block = imports[0]
+        import_href = import_block.get("href", "")
         if not import_href.startswith("#"):
             failures.append(
-                f"profile import href {import_href!r} should be a fragment ref to a back-matter resource"
+                f"{filename}: import href {import_href!r} should be a fragment ref"
+            )
+            continue
+
+        # Selection kind matches expected
+        actual_kind = (
+            "include-all" if "include-all" in import_block
+            else "include-controls" if "include-controls" in import_block
+            else None
+        )
+        if actual_kind != expected_selection:
+            failures.append(
+                f"{filename}: expected selection {expected_selection}, got {actual_kind}"
             )
 
-        if imports and "include-all" not in imports[0] and "include-controls" not in imports[0]:
-            failures.append("profile import must declare include-all or include-controls")
+        # If include-controls, validate count and that all IDs resolve
+        if expected_selection == "include-controls":
+            inc = import_block.get("include-controls", [])
+            if len(inc) != 1:
+                failures.append(
+                    f"{filename}: expected 1 include-controls block, got {len(inc)}"
+                )
+            else:
+                ids = inc[0].get("with-ids", [])
+                if len(ids) != expected_size:
+                    failures.append(
+                        f"{filename}: expected {expected_size} controls in scope, got {len(ids)}"
+                    )
+                missing = [cid for cid in ids if cid not in valid_control_ids]
+                if missing:
+                    failures.append(
+                        f"{filename}: include-controls IDs do not resolve in catalog: {missing[:3]}"
+                        f"{' ...' if len(missing) > 3 else ''}"
+                    )
+                duplicates = [cid for cid, n in Counter(ids).items() if n > 1]
+                if duplicates:
+                    failures.append(
+                        f"{filename}: duplicate control IDs in include-controls: {duplicates}"
+                    )
 
+        # Back-matter resource resolves
         bm_resources = profile.get("back-matter", {}).get("resources", []) or []
-        catalog_resource_uuid = import_href[1:] if import_href.startswith("#") else None
-        catalog_resource = next((r for r in bm_resources if r.get("uuid") == catalog_resource_uuid), None)
+        catalog_resource_uuid = import_href[1:]
+        catalog_resource = next(
+            (r for r in bm_resources if r.get("uuid") == catalog_resource_uuid), None
+        )
         if catalog_resource is None:
             failures.append(
-                f"profile back-matter resource {catalog_resource_uuid!r} not found "
+                f"{filename}: back-matter resource {catalog_resource_uuid!r} not found "
                 f"(import href does not resolve)"
             )
         else:
             rlinks = catalog_resource.get("rlinks") or []
             hrefs = [r.get("href", "") for r in rlinks]
-            if not any(h.endswith("ai-rmf-v0.3.json") for h in hrefs):
+            if not any(h.endswith("ai-rmf-v0.4.json") for h in hrefs):
                 failures.append(
-                    f"profile back-matter resource rlinks should include ai-rmf-v0.3.json target; "
-                    f"got {hrefs!r}"
+                    f"{filename}: rlinks should include ai-rmf-v0.4.json target; got {hrefs!r}"
                 )
 
     if failures:
@@ -275,8 +328,8 @@ def main() -> int:
         f"OK completeness: {expected_total} controls across "
         f"{sum(len(c) for c in ALL_CATEGORIES.values())} categories in 4 functions; "
         f"{total_links} cross-ref links across {controls_with_links} controls all resolve; "
-        f"baseline profile imports catalog cleanly; all statements match Core verbatim; "
-        f"all custom parts have ns"
+        f"{len(PROFILES)} profiles import catalog cleanly with expected selection and size; "
+        f"all statements match Core verbatim; all custom parts have ns"
     )
     return 0
 

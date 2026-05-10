@@ -1,8 +1,8 @@
 {
   "profile": {
-    "uuid": "89e467ba-dc87-5169-a01f-4e4026891f32",
+    "uuid": "4e7131ef-207a-5627-b249-65545f110e37",
     "metadata": {
-      "title": "AI RMF Baseline Profile (community example)",
+      "title": "AI RMF Tier 1 Foundational Profile (community example)",
       "last-modified": "2026-05-10T16:05:29.000Z",
       "version": "0.4.0",
       "oscal-version": "1.2.2",
@@ -14,12 +14,35 @@
           "remarks": "Community contributors to the ai-rmf-oscal-catalog project. Not produced by, endorsed by, or affiliated with NIST."
         }
       ],
-      "remarks": "Reference profile that imports the community AI RMF v0.4 catalog and selects all 72 subcategory controls (include-all). This profile is the simplest valid pattern, useful when a downstream consumer needs the complete catalog as a single profile and intends to derive a narrower selection by adding `exclude-controls` entries. It does not impose any tier opinion on the controls. Released under CC0 1.0. Not endorsed by NIST."
+      "remarks": "Tier 1 — Foundational worked example. Selects 18 controls covering the minimum viable AI risk management surface for low-risk, internal AI use. Includes foundational governance (legal compliance, executive accountability, trustworthy AI integration, AI inventory, role definitions, safety culture, incident sharing); minimum context mapping (intended purposes, task definition, human oversight, impact identification); minimum measurement (metric selection, TEVV documentation, safety and security evaluation); and minimum risk treatment (proceed/no-go determination, risk responses, incident communication). This is a worked example, not a normative baseline. Released under CC0 1.0. Not endorsed by NIST."
     },
     "imports": [
       {
         "href": "#e2a8751c-6aff-571a-a121-9d925775e5ca",
-        "include-all": {}
+        "include-controls": [
+          {
+            "with-ids": [
+              "ai-rmf-gv-1.1",
+              "ai-rmf-gv-1.2",
+              "ai-rmf-gv-1.6",
+              "ai-rmf-gv-2.1",
+              "ai-rmf-gv-2.3",
+              "ai-rmf-gv-4.1",
+              "ai-rmf-gv-4.3",
+              "ai-rmf-mp-1.1",
+              "ai-rmf-mp-2.1",
+              "ai-rmf-mp-3.5",
+              "ai-rmf-mp-5.1",
+              "ai-rmf-ms-1.1",
+              "ai-rmf-ms-2.1",
+              "ai-rmf-ms-2.6",
+              "ai-rmf-ms-2.7",
+              "ai-rmf-mg-1.1",
+              "ai-rmf-mg-1.3",
+              "ai-rmf-mg-4.3"
+            ]
+          }
+        ]
       }
     ],
     "merge": {

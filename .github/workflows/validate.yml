@@ -31,24 +31,27 @@ jobs:
       - name: Regenerate catalog
         run: python3 src/generator.py
 
-      - name: Regenerate baseline profile
+      - name: Regenerate all worked-example profiles
         run: python3 src/profile_generator.py
+
+      - name: Regenerate remediation proposals
+        run: python3 src/remediation_proposals.py
 
       - name: Verify generator output is committed (no drift between source and committed files)
         run: |
-          if ! git diff --quiet catalogs/ profiles/; then
-            echo "Generated catalog or profile differs from committed file. Re-run 'python3 src/generator.py' and 'python3 src/profile_generator.py' and commit."
-            git --no-pager diff catalogs/ profiles/
+          if ! git diff --quiet catalogs/ profiles/ source/; then
+            echo "Generated catalog, profile, or remediation proposals differ from committed file. Re-run 'python3 src/generator.py', 'python3 src/profile_generator.py', and 'python3 src/remediation_proposals.py' and commit."
+            git --no-pager diff catalogs/ profiles/ source/
             exit 1
           fi
 
       - name: OSCAL catalog schema validation
         run: npm run validate-catalog
 
-      - name: OSCAL profile schema validation
-        run: npm run validate-profile
+      - name: OSCAL profile schema validation (all 4 worked-example profiles)
+        run: npm run validate-profiles
 
-      - name: Completeness check (catalog + cross-refs + profile imports)
+      - name: Completeness check (catalog + cross-refs + 4 profile imports)
         run: python3 src/completeness_check.py
 
   upstream-drift:

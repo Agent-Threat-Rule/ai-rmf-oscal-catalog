@@ -1,11 +1,56 @@
 {
   "catalog": {
-    "uuid": "03d5bcc7-8af0-50ca-8a5a-5f963fb91667",
+    "uuid": "99317ca7-4bca-52d2-95ee-ccbb761f223d",
     "metadata": {
       "title": "NIST AI Risk Management Framework: full catalog (community OSCAL)",
-      "last-modified": "2026-05-10T11:06:52.000Z",
-      "version": "0.3.0",
+      "published": "2026-05-10T00:00:00.000Z",
+      "last-modified": "2026-05-10T16:09:11.000Z",
+      "version": "0.4.0",
       "oscal-version": "1.2.2",
+      "revisions": [
+        {
+          "title": "v0.1.0 — Initial release: GOVERN function only",
+          "published": "2026-05-10T00:00:00.000Z",
+          "version": "0.1.0",
+          "oscal-version": "1.2.2",
+          "remarks": "Initial release covering only the GOVERN function (19 subcategory controls). Released to demonstrate viability of community OSCAL representation of AI RMF and to surface the Playbook-vs-Core text divergence finding."
+        },
+        {
+          "title": "v0.2.0 — Expanded to all four AI RMF functions",
+          "published": "2026-05-10T00:00:00.000Z",
+          "version": "0.2.0",
+          "oscal-version": "1.2.2",
+          "remarks": "Catalog expanded to cover all four AI RMF functions (GOVERN, MAP, MEASURE, MANAGE) for a total of 72 subcategory controls. Statement and category text reproduced verbatim from AI RMF Core; implementation guidance reproduced from Playbook structured export."
+        },
+        {
+          "title": "v0.3.0 — Cross-reference links + worked example profile",
+          "published": "2026-05-10T00:00:00.000Z",
+          "version": "0.3.0",
+          "oscal-version": "1.2.2",
+          "remarks": "Added regex-extracted cross-reference links (31 links across 24 controls) and a worked example baseline profile importing the catalog with include-all selection."
+        },
+        {
+          "title": "v0.4.0 — Topic-graph cross-references + multi-tier profiles + remediation proposals + governance docs",
+          "published": "2026-05-11T00:00:00.000Z",
+          "version": "0.4.0",
+          "oscal-version": "1.2.2",
+          "remarks": "Added a deterministic topic-graph cross-reference extractor that uses the Playbook's own 46-topic taxonomy to surface topically-related controls. Coverage of cross-references rose from 24/72 (33%) to 56/72 (78%). Added three additional worked-example profiles (Tier 1 Foundational, Tier 2 Customer-Facing, Tier 3 High-Risk) with include-controls selections. Added remediation proposals for all 41 Playbook-vs-Core text divergences (see source/PLAYBOOK_REMEDIATION_PROPOSALS.md). Added governance documentation (CONTRIBUTING, MAINTAINERS, SECURITY). Catalog metadata extended with revision-history, roles, and responsible-parties."
+        }
+      ],
+      "roles": [
+        {
+          "id": "canonical-source",
+          "title": "Canonical source",
+          "short-name": "canonical-source",
+          "description": "Organisation that publishes the authoritative version of the framework or text reproduced in this catalog. The canonical source is responsible for the content; this catalog reproduces that content under the canonical source's terms."
+        },
+        {
+          "id": "community-maintainer",
+          "title": "Community maintainer",
+          "short-name": "community-maintainer",
+          "description": "Maintainer of this community OSCAL representation. Responsible for the catalog generator, profiles, validation tooling, and governance, but not for the canonical source content."
+        }
+      ],
       "parties": [
         {
           "uuid": "6cd5f134-c527-5d6a-ade7-eb71cf868c57",
@@ -13,9 +58,30 @@
           "name": "National Institute of Standards and Technology",
           "short-name": "NIST",
           "remarks": "NIST is the authoritative source of AI Risk Management Framework text reproduced in this catalog. NIST does not publish or endorse this community OSCAL representation."
+        },
+        {
+          "uuid": "247c2370-89c9-522f-9e08-a54c0b07d746",
+          "type": "organization",
+          "name": "ai-rmf-oscal-catalog community contributors",
+          "short-name": "ai-rmf-oscal-catalog",
+          "remarks": "Community contributors to the ai-rmf-oscal-catalog project at https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog. Not produced by, endorsed by, or affiliated with NIST. Released under CC0 1.0."
         }
       ],
-      "remarks": "Community-contributed OSCAL catalog covering all four functions of NIST AI RMF 1.0 (GOVERN, MAP, MEASURE, MANAGE). Statement and category text reproduced verbatim from the AI RMF Core (Section 5, Tables 1-4). Implementation guidance parts (about, suggested actions, documentation questions, references) are reproduced from the AI RMF Playbook structured export. Released under CC0 1.0. Not endorsed by NIST. The NIST OSCAL Team is the authoritative source for any official AI RMF OSCAL artifact."
+      "responsible-parties": [
+        {
+          "role-id": "canonical-source",
+          "party-uuids": [
+            "6cd5f134-c527-5d6a-ade7-eb71cf868c57"
+          ]
+        },
+        {
+          "role-id": "community-maintainer",
+          "party-uuids": [
+            "247c2370-89c9-522f-9e08-a54c0b07d746"
+          ]
+        }
+      ],
+      "remarks": "Community-contributed OSCAL catalog covering all four functions of NIST AI RMF 1.0 (GOVERN, MAP, MEASURE, MANAGE). Statement and category text reproduced verbatim from the AI RMF Core (Section 5, Tables 1-4). Implementation guidance parts (about, suggested actions, documentation questions, references) are reproduced from the AI RMF Playbook structured export. Cross-reference `links` are derived by two deterministic methods: (a) regex extraction of explicit references in Core and Playbook text (see src/cross_references.py); and (b) a topic-graph that uses the Playbook's own 46-topic taxonomy with conservative thresholds to surface topically-related controls (see src/topic_cross_references.py). Both methods are reproducible from `source/ai-rmf-playbook.json` and produce byte-stable output. Topic-derived links are tagged with a `text` field naming the shared topics, distinguishing them from regex-derived links. Released under CC0 1.0. Not endorsed by NIST. The NIST OSCAL Team is the authoritative source for any official AI RMF OSCAL artifact."
     },
     "groups": [
       {
@@ -84,6 +150,23 @@
                     "name": "ai-rmf-topic",
                     "value": "AI Actor Training",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Actor Training, Governance"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Actor Training, Governance"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-6.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Legal and Regulatory"
                   }
                 ]
               },
@@ -166,6 +249,28 @@
                     "name": "ai-rmf-topic",
                     "value": "Fairness and Bias",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
                   }
                 ]
               },
@@ -266,6 +371,18 @@
                     "value": "Documentation",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.6",
+                    "rel": "related",
+                    "text": "Topically related: shares Documentation, Governance, Risk Management"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-6.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Management"
+                  }
                 ]
               },
               {
@@ -322,6 +439,23 @@
                     "name": "ai-rmf-topic",
                     "value": "Continual Improvement",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-3.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
                   }
                 ]
               },
@@ -380,6 +514,18 @@
                     "value": "Documentation",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.4",
+                    "rel": "related",
+                    "text": "Topically related: shares Documentation, Governance, Risk Management"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-6.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Management"
+                  }
                 ]
               },
               {
@@ -431,6 +577,13 @@
                     "name": "ai-rmf-topic",
                     "value": "Governance",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-2.4",
+                    "rel": "related",
+                    "text": "Topically related: shares Decommission"
                   }
                 ]
               }
@@ -493,6 +646,23 @@
                     "value": "Risk Culture",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  }
                 ]
               },
               {
@@ -542,6 +712,16 @@
                   }
                 ],
                 "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Actor Training, Governance"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Actor Training, Governance"
+                  },
                   {
                     "href": "#ai-rmf-mp-3.4",
                     "rel": "related"
@@ -664,6 +844,13 @@
                     "value": "Governance",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp-1.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Diversity, Interdisciplinarity"
+                  }
                 ]
               },
               {
@@ -720,6 +907,28 @@
                     "name": "ai-rmf-topic",
                     "value": "AI Actor Training",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Actor Training, Governance"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Actor Training, Governance"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Human oversight"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-3.4",
+                    "rel": "related",
+                    "text": "Topically related: shares Human-AI teaming"
                   }
                 ]
               }
@@ -802,6 +1011,28 @@
                     "value": "Adversarial",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-2.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Adversarial"
+                  }
                 ]
               },
               {
@@ -871,6 +1102,21 @@
                   }
                 ],
                 "links": [
+                  {
+                    "href": "#ai-rmf-gv-2.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Impact Assessment, Risk Culture"
+                  },
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
@@ -957,6 +1203,28 @@
                     "value": "Fairness and Bias",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-2.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Impact Assessment, Risk Culture"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Drift"
+                  }
                 ]
               }
             ]
@@ -1038,6 +1306,13 @@
                     "value": "Impact Assessment",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-5.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Impact Assessment, Participation"
+                  }
                 ]
               },
               {
@@ -1099,6 +1374,13 @@
                     "name": "ai-rmf-topic",
                     "value": "Impact Assessment",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-5.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Impact Assessment, Participation"
                   }
                 ]
               }
@@ -1186,6 +1468,28 @@
                     "value": "Governance",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Legal and Regulatory"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-6.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-3.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Legal and Regulatory, Supply Chain, Third-party"
+                  }
                 ]
               },
               {
@@ -1257,6 +1561,28 @@
                     "name": "ai-rmf-topic",
                     "value": "Supply Chain",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.4",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Risk Management"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-6.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Governance, Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-3.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
                   }
                 ]
               }
@@ -1381,6 +1707,26 @@
                   {
                     "href": "#ai-rmf-gv",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Impact Assessment, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
                   }
                 ]
               },
@@ -1429,6 +1775,13 @@
                     "value": "Socio-technical systems",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-3.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Diversity, Interdisciplinarity"
+                  }
                 ]
               },
               {
@@ -1470,6 +1823,18 @@
                     "name": "ai-rmf-topic",
                     "value": "Societal Values",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Societal Values"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Societal Values, Socio-technical systems"
                   }
                 ]
               },
@@ -1695,6 +2060,23 @@
                     "value": "Documentation",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Human oversight"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-2.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Impact Assessment, Limitations"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-3.5",
+                    "rel": "related",
+                    "text": "Topically related: shares Human oversight"
+                  }
                 ]
               },
               {
@@ -1761,6 +2143,18 @@
                     "name": "ai-rmf-topic",
                     "value": "Limitations",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Impact Assessment, Limitations"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-2.5",
+                    "rel": "related",
+                    "text": "Topically related: shares Data, TEVV"
                   }
                 ]
               }
@@ -1935,6 +2329,28 @@
                     "value": "Fairness and Bias",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Impact Assessment, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  }
                 ]
               },
               {
@@ -2059,6 +2475,13 @@
                     "value": "Human-AI teaming",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Human-AI teaming"
+                  }
                 ]
               },
               {
@@ -2126,6 +2549,16 @@
                   {
                     "href": "#ai-rmf-gv",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Human oversight"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Human oversight"
                   }
                 ]
               }
@@ -2223,6 +2656,28 @@
                     "value": "Risky Emergent Behavior",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-6.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Legal and Regulatory, Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-6.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-3.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Pre-trained models, Third-party"
+                  }
                 ]
               },
               {
@@ -2284,6 +2739,18 @@
                     "name": "ai-rmf-topic",
                     "value": "Pre-trained models",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Pre-trained models"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Pre-trained models, Third-party"
                   }
                 ]
               }
@@ -2584,8 +3051,28 @@
                 ],
                 "links": [
                   {
+                    "href": "#ai-rmf-gv-1.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
                   }
                 ]
               },
@@ -2668,6 +3155,11 @@
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Context of Use, Impact Assessment, TEVV"
                   }
                 ]
               },
@@ -3001,6 +3493,16 @@
                 ],
                 "links": [
                   {
+                    "href": "#ai-rmf-gv-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Drift"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Drift"
+                  },
+                  {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
                   }
@@ -3065,6 +3567,28 @@
                     "name": "ai-rmf-topic",
                     "value": "Data",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares TEVV, Trustworthy Characteristics, Validity and Reliability"
                   }
                 ]
               },
@@ -3148,6 +3672,26 @@
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Context of Use, Safety, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Safety, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Safety, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Safety, TEVV, Trustworthy Characteristics"
                   }
                 ]
               },
@@ -3236,6 +3780,26 @@
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Secure and Resilient, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Risky Emergent Behavior, Secure and Resilient, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Secure and Resilient, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Secure and Resilient, TEVV, Trustworthy Characteristics"
                   }
                 ]
               },
@@ -3316,8 +3880,28 @@
                     "rel": "related"
                   },
                   {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, TEVV, Trustworthy Characteristics"
+                  },
+                  {
                     "href": "#ai-rmf-ms-2.9",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, TEVV, Trustworthy Characteristics"
                   }
                 ]
               },
@@ -3401,6 +3985,26 @@
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Explainability and Interpretability, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Explainability and Interpretability, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Explainability and Interpretability, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Explainability and Interpretability, TEVV, Trustworthy Characteristics"
                   }
                 ]
               },
@@ -3484,6 +4088,26 @@
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Privacy, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Privacy, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Privacy, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Privacy, TEVV, Trustworthy Characteristics"
                   }
                 ]
               },
@@ -3572,6 +4196,26 @@
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Fairness and Bias, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Fairness and Bias, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Fairness and Bias, TEVV, Trustworthy Characteristics"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Fairness and Bias, TEVV, Trustworthy Characteristics"
                   }
                 ]
               },
@@ -3785,6 +4429,23 @@
                     "value": "Continual Improvement",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.5",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  }
                 ]
               },
               {
@@ -3850,8 +4511,23 @@
                 ],
                 "links": [
                   {
+                    "href": "#ai-rmf-gv-1.5",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-3.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
                   }
                 ]
               },
@@ -4146,8 +4822,28 @@
                 ],
                 "links": [
                   {
+                    "href": "#ai-rmf-gv-1.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
                     "href": "#ai-rmf-ms-2.5",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Participation, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
                   }
                 ]
               },
@@ -4259,12 +4955,32 @@
                 ],
                 "links": [
                   {
+                    "href": "#ai-rmf-gv-1.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
+                  },
+                  {
                     "href": "#ai-rmf-ms-2.5",
                     "rel": "related"
                   },
                   {
                     "href": "#ai-rmf-ms-4.1",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Accountability and Transparency, Explainability and Interpretability, Fairness and Bias, Participation, Privacy, Safety, Secure and Resilient, TEVV, Trustworthy Characteristics, Validity and Reliability"
                   }
                 ]
               }
@@ -4343,6 +5059,28 @@
                     "name": "ai-rmf-topic",
                     "value": "Risk Assessment",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mg-2.2",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Deployment"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Deployment"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Risk Assessment"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Risk Assessment"
                   }
                 ]
               },
@@ -4458,6 +5196,11 @@
                   {
                     "href": "#ai-rmf-mp",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Legal and Regulatory, Risk Tolerance"
                   }
                 ]
               },
@@ -4664,6 +5407,28 @@
                     "value": "Societal Values",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares Drift"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Deployment"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Deployment"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Societal Values"
+                  }
                 ]
               },
               {
@@ -4778,6 +5543,11 @@
                   {
                     "href": "#ai-rmf-gv-1.7",
                     "rel": "related"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Risk Response, Risky Emergent Behavior"
                   }
                 ]
               }
@@ -4850,6 +5620,23 @@
                     "value": "Supply Chain",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-6.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-gv-6.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Supply Chain, Third-party"
+                  }
                 ]
               },
               {
@@ -4906,6 +5693,18 @@
                     "name": "ai-rmf-topic",
                     "value": "Monitoring",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-mp-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Pre-trained models"
+                  },
+                  {
+                    "href": "#ai-rmf-mp-4.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Pre-trained models"
                   }
                 ]
               }
@@ -5018,6 +5817,28 @@
                     "value": "Risky Emergent Behavior",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Adversarial"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-2.4",
+                    "rel": "related",
+                    "text": "Topically related: shares Risk Response, Risky Emergent Behavior"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Incidents, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-2.7",
+                    "rel": "related",
+                    "text": "Topically related: shares Adversarial, Risky Emergent Behavior"
+                  }
                 ]
               },
               {
@@ -5105,6 +5926,28 @@
                     "value": "Continual Improvement",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
                   }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-1.5",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-1.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Risk Assessment"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-3.1",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  },
+                  {
+                    "href": "#ai-rmf-ms-3.2",
+                    "rel": "related",
+                    "text": "Topically related: shares Continual Improvement, Monitoring"
+                  }
                 ]
               },
               {
@@ -5176,6 +6019,18 @@
                     "name": "ai-rmf-topic",
                     "value": "Monitoring",
                     "ns": "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "#ai-rmf-gv-4.3",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Incidents"
+                  },
+                  {
+                    "href": "#ai-rmf-mg-4.1",
+                    "rel": "related",
+                    "text": "Topically related: shares AI Incidents, Monitoring"
                   }
                 ]
               }

@@ -1,7 +1,7 @@
 """
-AI RMF OSCAL Catalog generator (all four functions, v0.2).
+AI RMF OSCAL Catalog generator (all four functions, v0.4).
 
-Builds catalogs/ai-rmf-v0.2.json conforming to OSCAL v1.2.2 catalog schema.
+Builds catalogs/ai-rmf-v0.4.json conforming to OSCAL v1.2.2 catalog schema.
 Control statements and category statements are taken verbatim from the AI RMF
 Core (NIST AI 100-1) — see src/airmf_core_text.py. Implementation guidance
 parts (about, suggested actions, documentation questions, references) come
@@ -35,10 +35,11 @@ from airmf_core_text import (
     MANAGE_CATEGORIES, MANAGE_SUBCATEGORIES,
 )
 from cross_references import extract_links
+from topic_cross_references import compute_all_topic_links, merge_with_existing
 
 REPO = Path(__file__).resolve().parent.parent
 SOURCE_PATH = REPO / "source" / "ai-rmf-playbook.json"
-OUTPUT_PATH = REPO / "catalogs" / "ai-rmf-v0.3.json"
+OUTPUT_PATH = REPO / "catalogs" / "ai-rmf-v0.4.json"
 
 NS = "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
 NAMESPACE_OID = uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8")  # url namespace per RFC 4122
@@ -54,6 +55,10 @@ FUNCTION_PREFIXES = {
 }
 
 PLAYBOOK_FUNCTION_FIELD = "type"  # values are 'Govern', 'Map', 'Measure', 'Manage' (mixed case in source)
+
+# Computed once at module load. Topic-graph cross-references are deterministic
+# functions of the Playbook source so a one-shot computation is sufficient.
+TOPIC_LINKS_BY_CONTROL = compute_all_topic_links()
 
 
 def stable_uuid(seed: str) -> str:
@@ -120,9 +125,11 @@ def make_control(item: dict) -> dict:
     props = make_props(item.get("AI Actors"), item.get("Topic"))
     if props:
         control["props"] = props
-    links = extract_links(item, function_upper, control_id)
-    if links:
-        control["links"] = links
+    regex_links = extract_links(item, function_upper, control_id)
+    topic_links = TOPIC_LINKS_BY_CONTROL.get(control_id, [])
+    merged = merge_with_existing(regex_links, topic_links)
+    if merged:
+        control["links"] = merged
     return control
 
 
@@ -210,14 +217,101 @@ def build_catalog(playbook: list) -> dict:
     groups = [make_function_group(fn, by_function[fn]) for fn in function_order if fn in by_function]
 
     nist_party_uuid = stable_uuid("party:nist")
+    community_party_uuid = stable_uuid("party:community-maintainers")
+    # OSCAL role.id is a TokenDatatype: must start with letter/underscore, no
+    # all-numeric leading char. Use stable string IDs rather than UUIDs.
+    role_canonical_source = "canonical-source"
+    role_community_maintainer = "community-maintainer"
 
-    catalog = {
-        "uuid": stable_uuid("catalog:ai-rmf-v0.3"),
-        "metadata": {
-            "title": "NIST AI Risk Management Framework: full catalog (community OSCAL)",
-            "last-modified": "PLACEHOLDER",
+    revisions = [
+        {
+            "title": "v0.1.0 — Initial release: GOVERN function only",
+            "published": "2026-05-10T00:00:00.000Z",
+            "version": "0.1.0",
+            "oscal-version": "1.2.2",
+            "remarks": (
+                "Initial release covering only the GOVERN function (19 subcategory "
+                "controls). Released to demonstrate viability of community OSCAL "
+                "representation of AI RMF and to surface the Playbook-vs-Core text "
+                "divergence finding."
+            ),
+        },
+        {
+            "title": "v0.2.0 — Expanded to all four AI RMF functions",
+            "published": "2026-05-10T00:00:00.000Z",
+            "version": "0.2.0",
+            "oscal-version": "1.2.2",
+            "remarks": (
+                "Catalog expanded to cover all four AI RMF functions (GOVERN, MAP, "
+                "MEASURE, MANAGE) for a total of 72 subcategory controls. Statement "
+                "and category text reproduced verbatim from AI RMF Core; "
+                "implementation guidance reproduced from Playbook structured export."
+            ),
+        },
+        {
+            "title": "v0.3.0 — Cross-reference links + worked example profile",
+            "published": "2026-05-10T00:00:00.000Z",
             "version": "0.3.0",
             "oscal-version": "1.2.2",
+            "remarks": (
+                "Added regex-extracted cross-reference links (31 links across 24 "
+                "controls) and a worked example baseline profile importing the "
+                "catalog with include-all selection."
+            ),
+        },
+        {
+            "title": "v0.4.0 — Topic-graph cross-references + multi-tier profiles + remediation proposals + governance docs",
+            "published": "2026-05-11T00:00:00.000Z",
+            "version": "0.4.0",
+            "oscal-version": "1.2.2",
+            "remarks": (
+                "Added a deterministic topic-graph cross-reference extractor that "
+                "uses the Playbook's own 46-topic taxonomy to surface topically-"
+                "related controls. Coverage of cross-references rose from 24/72 "
+                "(33%) to 56/72 (78%). Added three additional worked-example "
+                "profiles (Tier 1 Foundational, Tier 2 Customer-Facing, Tier 3 "
+                "High-Risk) with include-controls selections. Added remediation "
+                "proposals for all 41 Playbook-vs-Core text divergences (see "
+                "source/PLAYBOOK_REMEDIATION_PROPOSALS.md). Added governance "
+                "documentation (CONTRIBUTING, MAINTAINERS, SECURITY). Catalog "
+                "metadata extended with revision-history, roles, and "
+                "responsible-parties."
+            ),
+        },
+    ]
+
+    catalog = {
+        "uuid": stable_uuid("catalog:ai-rmf-v0.4"),
+        "metadata": {
+            "title": "NIST AI Risk Management Framework: full catalog (community OSCAL)",
+            "published": "2026-05-10T00:00:00.000Z",
+            "last-modified": "PLACEHOLDER",
+            "version": "0.4.0",
+            "oscal-version": "1.2.2",
+            "revisions": revisions,
+            "roles": [
+                {
+                    "id": role_canonical_source,
+                    "title": "Canonical source",
+                    "short-name": "canonical-source",
+                    "description": (
+                        "Organisation that publishes the authoritative version of the "
+                        "framework or text reproduced in this catalog. The canonical "
+                        "source is responsible for the content; this catalog reproduces "
+                        "that content under the canonical source's terms."
+                    ),
+                },
+                {
+                    "id": role_community_maintainer,
+                    "title": "Community maintainer",
+                    "short-name": "community-maintainer",
+                    "description": (
+                        "Maintainer of this community OSCAL representation. Responsible "
+                        "for the catalog generator, profiles, validation tooling, and "
+                        "governance, but not for the canonical source content."
+                    ),
+                },
+            ],
             "parties": [
                 {
                     "uuid": nist_party_uuid,
@@ -230,6 +324,28 @@ def build_catalog(playbook: list) -> dict:
                         "this community OSCAL representation."
                     ),
                 },
+                {
+                    "uuid": community_party_uuid,
+                    "type": "organization",
+                    "name": "ai-rmf-oscal-catalog community contributors",
+                    "short-name": "ai-rmf-oscal-catalog",
+                    "remarks": (
+                        "Community contributors to the ai-rmf-oscal-catalog project at "
+                        "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog. "
+                        "Not produced by, endorsed by, or affiliated with NIST. Released "
+                        "under CC0 1.0."
+                    ),
+                },
+            ],
+            "responsible-parties": [
+                {
+                    "role-id": role_canonical_source,
+                    "party-uuids": [nist_party_uuid],
+                },
+                {
+                    "role-id": role_community_maintainer,
+                    "party-uuids": [community_party_uuid],
+                },
             ],
             "remarks": (
                 "Community-contributed OSCAL catalog covering all four functions of "
@@ -237,7 +353,15 @@ def build_catalog(playbook: list) -> dict:
                 "text reproduced verbatim from the AI RMF Core (Section 5, Tables 1-4). "
                 "Implementation guidance parts (about, suggested actions, documentation "
                 "questions, references) are reproduced from the AI RMF Playbook structured "
-                "export. Released under CC0 1.0. Not endorsed by NIST. The NIST OSCAL "
+                "export. Cross-reference `links` are derived by two deterministic methods: "
+                "(a) regex extraction of explicit references in Core and Playbook text "
+                "(see src/cross_references.py); and (b) a topic-graph that uses the "
+                "Playbook's own 46-topic taxonomy with conservative thresholds to surface "
+                "topically-related controls (see src/topic_cross_references.py). Both "
+                "methods are reproducible from `source/ai-rmf-playbook.json` and produce "
+                "byte-stable output. Topic-derived links are tagged with a `text` field "
+                "naming the shared topics, distinguishing them from regex-derived links. "
+                "Released under CC0 1.0. Not endorsed by NIST. The NIST OSCAL "
                 "Team is the authoritative source for any official AI RMF OSCAL artifact."
             ),
         },

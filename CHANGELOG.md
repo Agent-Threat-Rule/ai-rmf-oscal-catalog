@@ -7,6 +7,83 @@ catalog version follows [Semantic Versioning](https://semver.org/) where
 and "PATCH" tracks corrections that do not change the set of controls or
 their statement text.
 
+## [0.4.0] - 2026-05-11
+
+### Added
+
+- **Topic-graph cross-reference extractor** (`src/topic_cross_references.py`).
+  Uses the AI RMF Playbook's own 46-topic taxonomy (already present in the
+  source data) to surface topically-related controls through a deterministic,
+  inverse-frequency-weighted scoring scheme. Combined with the regex
+  extractor from v0.3, total cross-reference coverage rises from 24 of 72
+  controls (33%) to 56 of 72 (78%). 176 total directed cross-reference links.
+  Topic-derived links carry a `text` field describing the shared topics so
+  consumers can distinguish them from regex-derived links.
+- **Three additional worked-example profiles**:
+  - `profiles/ai-rmf-tier-1-foundational-profile.json` — 18 controls, the
+    minimum viable AI risk management surface for low-risk internal AI use.
+  - `profiles/ai-rmf-tier-2-customer-facing-profile.json` — 55 controls,
+    Tier 1 plus controls relevant for AI deployed to external users
+    (fairness, explainability, privacy, post-deployment monitoring,
+    third-party concerns).
+  - `profiles/ai-rmf-tier-3-high-risk-profile.json` — 72 controls
+    (include-all) with high-risk-specific framing.
+- **Tier rationale documentation** (`profiles/TIER_RATIONALE.md`) describing
+  the selection criteria, rationale for inclusions, and rationale for
+  exclusions in each tier profile. Tier profiles are explicit worked
+  examples; they are not normative AI RMF baselines.
+- **Remediation proposals** for all 41 Playbook-vs-Core divergences:
+  - `source/PLAYBOOK_REMEDIATION_PROPOSALS.md` — human-readable per-control
+    proposal with type classification, severity (1=cosmetic, 2=typo or
+    systemic capitalisation, 3=semantic), recommendation
+    (`adopt-core` or `adopt-core-with-caveat`), literal patch text, and
+    rationale.
+  - `source/playbook_remediation_proposals.json` — machine-readable
+    structured export of the same data.
+  - 1 severity-3 (semantic GOVERN 5.2), 9 severity-2 (1 typo + 8 systemic
+    capitalisation), 31 severity-1 (minor wording / whitespace).
+  - 2 systemic findings: function-name casing inconsistency in MEASURE
+    function references, and Core-internal hyphenation inconsistency for
+    "third-party" between GOVERN 6.1 and MAP 4.1.
+- **Governance documentation**:
+  - `CONTRIBUTING.md` — how to contribute, validation workflow,
+    contribution scope, upstream contact pointers to NIST.
+  - `MAINTAINERS.md` — current maintainers, decision-making process,
+    bus-factor disclosure (currently 1), conflict-of-interest declarations.
+  - `SECURITY.md` — vulnerability reporting policy, threat model, scope
+    of "what counts as a security issue here".
+- **Catalog metadata enhancements**:
+  - `published` timestamp.
+  - `revisions` array with v0.1.0, v0.2.0, v0.3.0, v0.4.0 entries.
+  - `roles` (canonical-source, community-maintainer).
+  - `responsible-parties` mapping NIST → canonical-source and the
+    community contributors → community-maintainer.
+  - Community contributors party added alongside the existing NIST party.
+- Multi-profile validation in `src/completeness_check.py`: verifies the
+  expected control count and selection kind (`include-all` vs
+  `include-controls`) for each tier profile, and verifies all
+  `include-controls` IDs resolve to real controls in the catalog.
+- npm scripts: per-profile validation tasks (`validate-profile-baseline`,
+  `validate-profile-tier-1/2/3`) and combined `validate-profiles`.
+
+### Changed
+- Catalog filename: `catalogs/ai-rmf-v0.3.json` → `catalogs/ai-rmf-v0.4.json`.
+  v0.3 history remains in git for reference.
+- Profile filename `ai-rmf-baseline-profile.json` retained but rebuilt to
+  reference the v0.4 catalog and the v0.4-versioned UUIDs.
+- README and CHANGELOG updated to reflect v0.4 deliverables.
+- Generator metadata block extended with `revisions`, `roles`,
+  `responsible-parties`, and a second `parties` entry.
+- `package.json` validate script targets `catalogs/ai-rmf-v0.4.json`.
+
+### Coverage
+- 72 controls (unchanged)
+- 176 cross-reference links across 56 controls (up from 31 across 24)
+- 4 worked-example profiles (up from 1)
+- 41 remediation proposals (new)
+- 5-layer validation: catalog schema + 4 profile schemas + completeness
+  + cross-ref resolution + drift detection
+
 ## [0.3.0] - 2026-05-10
 
 ### Added
