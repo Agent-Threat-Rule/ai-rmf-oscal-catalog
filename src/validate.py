@@ -17,7 +17,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = REPO / "schemas" / "oscal_catalog_schema.json"
-CATALOG_PATH = REPO / "catalogs" / "ai-rmf-govern-v0.1.json"
+CATALOG_PATH = REPO / "catalogs" / "ai-rmf-v0.2.json"
 LOCAL_AJV = REPO / "node_modules" / ".bin" / "ajv"
 
 

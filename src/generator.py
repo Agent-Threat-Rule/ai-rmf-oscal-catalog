@@ -1,17 +1,20 @@
 """
-AI RMF OSCAL Catalog generator (GOVERN function, v0.1).
+AI RMF OSCAL Catalog generator (all four functions, v0.2).
 
-Builds catalogs/ai-rmf-govern-v0.1.json conforming to OSCAL v1.2.2 catalog
-schema. Control and category statements are taken verbatim from the AI RMF
+Builds catalogs/ai-rmf-v0.2.json conforming to OSCAL v1.2.2 catalog schema.
+Control statements and category statements are taken verbatim from the AI RMF
 Core (NIST AI 100-1) — see src/airmf_core_text.py. Implementation guidance
 parts (about, suggested actions, documentation questions, references) come
 from source/ai-rmf-playbook.json (NIST AI RMF Playbook structured export).
 
-Why two sources: the Playbook JSON export contains minor textual deviations
-from the Core canonical text (typos, dropped "and practices", and at least
-one semantic divergence at GOVERN 5.2). The catalog statement must cite the
-Core; the Playbook content fills in implementation guidance which is
-Playbook-native.
+Why two sources: a 2026-05-10 audit found 41 of 72 subcategory descriptions
+in the Playbook JSON drift from the AI RMF Core canonical text. Compliance
+work cites the Core, so control statements use the Core; the Playbook
+content fills in implementation guidance which is Playbook-native.
+
+OSCAL structure: top-level groups represent the four AI RMF functions
+(GOVERN, MAP, MEASURE, MANAGE); each function group contains category groups;
+each category group contains controls (subcategories).
 
 Usage:
     python3 src/generator.py
@@ -23,15 +26,33 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from airmf_core_text import GOVERN_CATEGORIES, GOVERN_SUBCATEGORIES
+from airmf_core_text import (
+    ALL_CATEGORIES,
+    ALL_SUBCATEGORIES,
+    GOVERN_CATEGORIES, GOVERN_SUBCATEGORIES,
+    MAP_CATEGORIES, MAP_SUBCATEGORIES,
+    MEASURE_CATEGORIES, MEASURE_SUBCATEGORIES,
+    MANAGE_CATEGORIES, MANAGE_SUBCATEGORIES,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 SOURCE_PATH = REPO / "source" / "ai-rmf-playbook.json"
-OUTPUT_PATH = REPO / "catalogs" / "ai-rmf-govern-v0.1.json"
+OUTPUT_PATH = REPO / "catalogs" / "ai-rmf-v0.2.json"
 
 NS = "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"
 NAMESPACE_OID = uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8")  # url namespace per RFC 4122
 ATR_OSCAL_NS = uuid.uuid5(NAMESPACE_OID, "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog")
+
+# Function name in source data (Playbook 'type') and in Core/AIRC titles map to
+# short OSCAL-friendly prefixes used in IDs and to upper-case names used in titles.
+FUNCTION_PREFIXES = {
+    "GOVERN": "gv",
+    "MAP": "mp",
+    "MEASURE": "ms",
+    "MANAGE": "mg",
+}
+
+PLAYBOOK_FUNCTION_FIELD = "type"  # values are 'Govern', 'Map', 'Measure', 'Manage' (mixed case in source)
 
 
 def stable_uuid(seed: str) -> str:
@@ -46,7 +67,7 @@ def make_part(name: str, prose: str, ns: str | None = None) -> dict:
 
 
 def make_props(actors, topics) -> list:
-    props = []
+    props: list = []
     for a in actors or []:
         props.append({"name": "ai-rmf-actor", "value": a, "ns": NS})
     for t in topics or []:
@@ -54,27 +75,32 @@ def make_props(actors, topics) -> list:
     return props
 
 
-def split_subcat(title: str) -> tuple[str, str, str]:
-    """Return (category_num, subcat_num, full_key). Title format: 'GOVERN 1.1'."""
-    _, num = title.split(" ")
+def split_subcat(title: str) -> tuple[str, str, str, str]:
+    """Return (function_upper, cat_num, subcat_num, full_subcat_key).
+
+    Title format in playbook source: 'GOVERN 1.1', 'MAP 2.3', etc.
+    """
+    function_word, num = title.split(" ", 1)
+    function_upper = function_word.upper()
     cat_num, subcat_num = num.split(".")
-    return cat_num, subcat_num, num
+    return function_upper, cat_num, subcat_num, num
 
 
 def make_control(item: dict) -> dict:
-    cat_num, subcat_num, key = split_subcat(item["title"])
-    control_id = f"ai-rmf-gv-{cat_num}.{subcat_num}"
+    function_upper, cat_num, subcat_num, key = split_subcat(item["title"])
+    prefix = FUNCTION_PREFIXES[function_upper]
+    control_id = f"ai-rmf-{prefix}-{cat_num}.{subcat_num}"
 
-    statement_text = GOVERN_SUBCATEGORIES.get(key)
+    statement_text = ALL_SUBCATEGORIES[function_upper].get(key)
     if not statement_text:
         raise ValueError(
-            f"missing AI RMF Core text for GOVERN {key}; update src/airmf_core_text.py"
+            f"missing AI RMF Core text for {function_upper} {key}; update src/airmf_core_text.py"
         )
 
     parts: list[dict] = [make_part("statement", statement_text)]
 
-    # Implementation guidance parts come from Playbook. Custom (non-OSCAL-standard)
-    # part names get our ns so consumers know they are local extensions.
+    # Implementation guidance from Playbook. Custom (non-standard) part names
+    # carry the project ns so consumers know they are local extensions.
     if item.get("section_about"):
         parts.append(make_part("guidance", item["section_about"]))
     if item.get("section_actions"):
@@ -96,23 +122,49 @@ def make_control(item: dict) -> dict:
     return control
 
 
-def make_group(category_id: str, items: list) -> dict:
-    cat_num = category_id.split("-")[1]
-    group_id = f"ai-rmf-gv-{cat_num}"
-    category_text = GOVERN_CATEGORIES.get(cat_num)
+def make_category_group(function_upper: str, category_num: str, items: list) -> dict:
+    prefix = FUNCTION_PREFIXES[function_upper]
+    category_id = f"ai-rmf-{prefix}-{category_num}"
+    category_text = ALL_CATEGORIES[function_upper].get(category_num)
     if not category_text:
         raise ValueError(
-            f"missing AI RMF Core text for GOVERN-{cat_num}; update src/airmf_core_text.py"
+            f"missing AI RMF Core text for {function_upper}-{category_num}; update src/airmf_core_text.py"
         )
 
     items_sorted = sorted(items, key=lambda i: int(i["title"].split(".")[1]))
 
     return {
-        "id": group_id,
+        "id": category_id,
         "class": "ai-rmf-category",
-        "title": f"GOVERN {cat_num}",
+        "title": f"{function_upper} {category_num}",
         "parts": [make_part("ai-rmf-category-statement", category_text, ns=NS)],
         "controls": [make_control(i) for i in items_sorted],
+    }
+
+
+def make_function_group(function_upper: str, items: list) -> dict:
+    """Outer group representing one AI RMF function (GOVERN, MAP, MEASURE, MANAGE).
+
+    Contains nested category groups, each containing the subcategory controls.
+    """
+    prefix = FUNCTION_PREFIXES[function_upper]
+    function_id = f"ai-rmf-{prefix}"
+
+    by_cat: dict[str, list] = defaultdict(list)
+    for it in items:
+        _, cat_num, _, _ = split_subcat(it["title"])
+        by_cat[cat_num].append(it)
+
+    cat_groups = [
+        make_category_group(function_upper, c, by_cat[c])
+        for c in sorted(by_cat.keys(), key=int)
+    ]
+
+    return {
+        "id": function_id,
+        "class": "ai-rmf-function",
+        "title": function_upper,
+        "groups": cat_groups,
     }
 
 
@@ -143,25 +195,24 @@ def preserved_last_modified(new_doc: dict) -> str:
 
 
 def build_catalog(playbook: list) -> dict:
-    govern = [x for x in playbook if x["type"].lower() == "govern"]
+    by_function: dict[str, list] = defaultdict(list)
+    for item in playbook:
+        function_upper = item[PLAYBOOK_FUNCTION_FIELD].upper()
+        if function_upper not in FUNCTION_PREFIXES:
+            continue
+        by_function[function_upper].append(item)
 
-    by_cat: dict[str, list] = defaultdict(list)
-    for item in govern:
-        by_cat[item["category"]].append(item)
-
-    groups = [
-        make_group(cat, by_cat[cat])
-        for cat in sorted(by_cat.keys(), key=lambda k: int(k.split("-")[1]))
-    ]
+    function_order = ["GOVERN", "MAP", "MEASURE", "MANAGE"]
+    groups = [make_function_group(fn, by_function[fn]) for fn in function_order if fn in by_function]
 
     nist_party_uuid = stable_uuid("party:nist")
 
     catalog = {
-        "uuid": stable_uuid("catalog:ai-rmf-govern-v0.1"),
+        "uuid": stable_uuid("catalog:ai-rmf-v0.2"),
         "metadata": {
-            "title": "NIST AI Risk Management Framework: GOVERN function (community OSCAL catalog)",
+            "title": "NIST AI Risk Management Framework: full catalog (community OSCAL)",
             "last-modified": "PLACEHOLDER",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "oscal-version": "1.2.2",
             "parties": [
                 {
@@ -177,13 +228,13 @@ def build_catalog(playbook: list) -> dict:
                 },
             ],
             "remarks": (
-                "Community-contributed OSCAL catalog for the GOVERN function of "
-                "NIST AI RMF 1.0. Statement and category text reproduced verbatim "
-                "from the AI RMF Core (Section 5, Table 1). Implementation guidance "
-                "parts (about, suggested actions, documentation questions, references) "
-                "are reproduced from the AI RMF Playbook structured export. Released "
-                "under CC0 1.0. Not endorsed by NIST. The NIST OSCAL Team is the "
-                "authoritative source for any official AI RMF OSCAL artifact."
+                "Community-contributed OSCAL catalog covering all four functions of "
+                "NIST AI RMF 1.0 (GOVERN, MAP, MEASURE, MANAGE). Statement and category "
+                "text reproduced verbatim from the AI RMF Core (Section 5, Tables 1-4). "
+                "Implementation guidance parts (about, suggested actions, documentation "
+                "questions, references) are reproduced from the AI RMF Playbook structured "
+                "export. Released under CC0 1.0. Not endorsed by NIST. The NIST OSCAL "
+                "Team is the authoritative source for any official AI RMF OSCAL artifact."
             ),
         },
         "groups": groups,
@@ -221,10 +272,12 @@ def build_catalog(playbook: list) -> dict:
                     "remarks": (
                         "Structured Playbook export. Source of implementation guidance "
                         "parts (about, suggested actions, documentation questions, "
-                        "references). The Playbook contains minor textual deviations "
-                        "from the Core (typos, comma differences, and at least one "
-                        "semantic divergence at GOVERN 5.2); the Playbook is therefore "
-                        "not used as the source for Core control statements."
+                        "references). The Playbook contains 41 textual deviations from "
+                        "the Core across 72 subcategories (typos, conjunctions, "
+                        "pluralisation, capitalisation, and at least one semantic "
+                        "divergence at GOVERN 5.2); the Playbook is therefore not used "
+                        "as the source for Core control statements. See "
+                        "source/ATTRIBUTION.md for the full inventory."
                     ),
                 },
             ],
@@ -245,12 +298,18 @@ def main() -> int:
     with OUTPUT_PATH.open("w") as f:
         json.dump(catalog, f, indent=2, ensure_ascii=False)
 
-    groups = catalog["catalog"]["groups"]
-    controls = sum(len(g["controls"]) for g in groups)
+    function_groups = catalog["catalog"]["groups"]
+    total_categories = sum(len(fg.get("groups", [])) for fg in function_groups)
+    total_controls = sum(
+        len(cg.get("controls", []))
+        for fg in function_groups
+        for cg in fg.get("groups", [])
+    )
     print(f"wrote {OUTPUT_PATH}")
-    print(f"  groups:         {len(groups)}")
-    print(f"  controls:       {controls}")
-    print(f"  last-modified:  {catalog['catalog']['metadata']['last-modified']}")
+    print(f"  function groups: {len(function_groups)}")
+    print(f"  category groups: {total_categories}")
+    print(f"  controls:        {total_controls}")
+    print(f"  last-modified:   {catalog['catalog']['metadata']['last-modified']}")
     return 0
 
 

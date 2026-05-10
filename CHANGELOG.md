@@ -7,6 +7,42 @@ catalog version follows [Semantic Versioning](https://semver.org/) where
 and "PATCH" tracks corrections that do not change the set of controls or
 their statement text.
 
+## [0.2.0] - 2026-05-10
+
+### Added
+- Expanded coverage to all four AI RMF functions (GOVERN, MAP, MEASURE, MANAGE).
+  v0.2 catalog contains 19 categories and 72 subcategories — full coverage of
+  AI RMF 1.0 Tables 1-4.
+- Hierarchical OSCAL group structure: 4 top-level function groups, each with
+  nested category groups, each containing subcategory controls. This matches
+  the AI RMF document organisation.
+- Verbatim AI RMF Core text for all 19 categories and 72 subcategories in
+  `src/airmf_core_text.py`, programmatically extracted from the AIRC Core
+  HTML rendering and sanity-cleaned against trailing site-footer artifacts.
+- Full Playbook-vs-Core divergence inventory at
+  `source/PLAYBOOK_VS_CORE_DIVERGENCES.md`. The audit found 41 of 72
+  subcategories drift between the Playbook JSON export and the Core
+  canonical text — 1 typo, 1 semantic divergence at GOVERN 5.2,
+  7 capitalisation-only divergences (function names rendered as lower-case
+  in Core but upper-case in Playbook), and 32 minor wording variations.
+- Drift test (`tests/test_core_text_drift.py`) extended to verify all four
+  functions against upstream AIRC Core.
+- Completeness checker extended to verify nested group structure, function
+  ordering, category ordering, and 72 expected control IDs.
+
+### Changed
+- Catalog filename: `catalogs/ai-rmf-govern-v0.1.json` removed; replaced by
+  `catalogs/ai-rmf-v0.2.json` (no longer GOVERN-only).
+- README: rewrote scope and coverage sections to reflect the full four-function
+  catalog. Notable-finding section expanded with per-function drift breakdown.
+- Generator: refactored to loop across all four functions, with helper
+  functions for function-level groups, category-level groups, and controls.
+- `package.json` validate script now targets `catalogs/ai-rmf-v0.2.json`.
+
+### Removed
+- `catalogs/ai-rmf-govern-v0.1.json` — superseded by v0.2 full catalog.
+  v0.1 history remains in git for reference.
+
 ## [0.1.0] - 2026-05-10
 
 ### Added
