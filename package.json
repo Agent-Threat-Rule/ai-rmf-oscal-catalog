@@ -1,0 +1,14 @@
+{
+  "name": "ai-rmf-oscal-catalog",
+  "version": "0.1.0",
+  "description": "Tooling deps for OSCAL schema validation of AI RMF catalog",
+  "private": true,
+  "license": "CC0-1.0",
+  "scripts": {
+    "validate": "ajv validate -s schemas/oscal_catalog_schema.json -d catalogs/ai-rmf-govern-v0.1.json -c ajv-formats --strict=false --spec=draft7"
+  },
+  "devDependencies": {
+    "ajv-cli": "^5.0.0",
+    "ajv-formats": "^3.0.1"
+  }
+}

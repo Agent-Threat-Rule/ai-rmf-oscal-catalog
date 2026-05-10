@@ -1,0 +1,61 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 7 * * 1"  # weekly Monday 07:00 UTC: drift check against upstream NIST text
+
+jobs:
+  schema-and-completeness:
+    name: schema + completeness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install ajv-cli + ajv-formats
+        run: npm ci
+
+      - name: Regenerate catalog
+        run: python3 src/generator.py
+
+      - name: Verify generator output is committed (no drift between source and catalog)
+        run: |
+          if ! git diff --quiet catalogs/; then
+            echo "Generated catalog differs from committed file. Re-run 'python3 src/generator.py' and commit."
+            git --no-pager diff catalogs/
+            exit 1
+          fi
+
+      - name: OSCAL schema validation
+        run: python3 src/validate.py
+
+      - name: Completeness check
+        run: python3 src/completeness_check.py
+
+  upstream-drift:
+    name: upstream NIST text drift
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Drift test against AIRC Core
+        run: python3 tests/test_core_text_drift.py
