@@ -37,10 +37,8 @@ CATALOG_PATH = REPO / "catalogs" / "ai-rmf-v0.4.json"
 # expected_selection_kind: "include-all" or "include-controls".
 # expected_size: total controls in scope (72 for include-all; explicit count for include-controls).
 PROFILES = [
-    ("ai-rmf-baseline-profile.json", "include-all", 72),
-    ("ai-rmf-tier-1-foundational-profile.json", "include-controls", 18),
-    ("ai-rmf-tier-2-customer-facing-profile.json", "include-controls", 55),
-    ("ai-rmf-tier-3-high-risk-profile.json", "include-all", 72),
+    ("ai-rmf-example-1-profile.json", "include-controls", 18),
+    ("ai-rmf-example-2-profile.json", "include-controls", 55),
 ]
 
 NS = "https://github.com/Agent-Threat-Rule/ai-rmf-oscal-catalog/ns"

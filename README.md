@@ -80,30 +80,30 @@ Both methods are deterministic — same inputs always produce same outputs, no L
 
 ## Using this catalog in OSCAL profiles
 
-The repository ships **four worked-example profiles** at `profiles/`:
+The repository ships **two worked-example profiles** at `profiles/`:
 
-| Profile | Selection | Controls | Use case |
+| Profile | Selection | Controls | Illustrates |
 |---|---|---|---|
-| `ai-rmf-baseline-profile.json` | `include-all` | 72 | Reference profile, no tier opinion |
-| `ai-rmf-tier-1-foundational-profile.json` | `include-controls` | 18 | Low-risk internal AI use |
-| `ai-rmf-tier-2-customer-facing-profile.json` | `include-controls` | 55 | AI deployed to external users |
-| `ai-rmf-tier-3-high-risk-profile.json` | `include-all` | 72 | Regulated / safety-critical |
+| `ai-rmf-example-1-profile.json` | `include-controls` | 18 | A reasonable minimum selection for low-risk, internal AI use |
+| `ai-rmf-example-2-profile.json` | `include-controls` | 55 | A broader selection for AI whose outputs reach external users |
 
-Tier rationale, including selection criteria and exclusion rationale, is documented at [`profiles/TIER_RATIONALE.md`](profiles/TIER_RATIONALE.md). These are illustrative worked examples; they are **not** normative AI RMF baselines and have not been endorsed by NIST.
+These are illustrative worked examples selected purely by control count; they are **not** normative AI RMF baselines, **not** official NIST tiers, and have not been endorsed by NIST. Selection criteria and exclusion rationale are documented at [`profiles/EXAMPLES_RATIONALE.md`](profiles/EXAMPLES_RATIONALE.md).
 
-To validate the catalog and all profiles locally:
+A deployment that wants the entire catalog does not need a dedicated profile — it can import the catalog directly or use an `include-all` selection — so no select-all profile is shipped.
+
+To validate the catalog and both profiles locally:
 
 ```
 npm run validate
 ```
 
-Or per-profile (e.g., to validate only Tier 2):
+Or per-profile (e.g., to validate only example 2):
 
 ```
-npm run validate-profile-tier-2
+npm run validate-profile-example-2
 ```
 
-Downstream profiles can derive their own selections by replacing `include-all` with `include-controls` (positive selection) or by adding `exclude-controls` to drop subcategories that are out of scope.
+Downstream profiles can derive their own selections by adjusting the `include-controls` selection (positive selection) or by adding `exclude-controls` to drop subcategories that are out of scope.
 
 ## Remediation proposals for the Playbook-vs-Core divergences
 
@@ -164,8 +164,8 @@ Re-fetches the AI RMF Core HTML rendering and diffs the embedded constants for a
 - v0.1 (2026-05-10, superseded): GOVERN function only, 19 controls, schema-validated.
 - v0.2 (2026-05-10, superseded): all four functions, 72 controls, full Playbook-vs-Core divergence inventory.
 - v0.3 (2026-05-10, superseded): explicit cross-reference `links` (31 across 24 controls). Worked example baseline profile.
-- v0.4 (this release, 2026-05-11): topic-graph cross-reference extractor (176 links across 56 controls, 78% coverage). Three additional tier profiles (Foundational / Customer-Facing / High-Risk). 41 per-divergence remediation proposals + 2 systemic findings. Governance docs (CONTRIBUTING / MAINTAINERS / SECURITY). Catalog metadata extended with revision-history + roles + responsible-parties.
-- v0.5 (planned): LLM-assisted semantic cross-reference pass with human review for the 16 controls still without cross-reference links. OSCAL Team review feedback incorporated if any received.
+- v0.4 (2026-05-11): topic-graph cross-reference extractor (176 links across 56 controls, 78% coverage). Worked-example profiles (later reworked in v0.5). 41 per-divergence remediation proposals + 2 systemic findings. Governance docs (CONTRIBUTING / MAINTAINERS / SECURITY). Catalog metadata extended with revision-history + roles + responsible-parties.
+- v0.5 (profiles, 2026-07): reworked the worked-example profiles per NIST OSCAL review feedback — dropped the two select-all profiles as redundant with the catalog, and renamed the two subset profiles to neutral example names (an 18-control subset and a 55-control subset), removing tiering language. Planned: LLM-assisted semantic cross-reference pass with human review for the 16 controls still without cross-reference links.
 - v1.0: stable, declared compatible with at least one OSCAL Team-published reference profile.
 
 ## Contributing
@@ -174,7 +174,7 @@ Full contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md). Maintainer roster +
 
 Issues and pull requests welcome. The catalog is intentionally narrow in scope; out-of-scope contributions will be redirected.
 
-In scope: corrections to AI RMF source fidelity, OSCAL schema compliance fixes, structural improvements to the generator, control-to-control `links` modeling, additional tier profiles representing other reasonable scope choices, additional Playbook content updates when NIST publishes new exports.
+In scope: corrections to AI RMF source fidelity, OSCAL schema compliance fixes, structural improvements to the generator, control-to-control `links` modeling, additional worked-example profiles representing other reasonable scope choices, additional Playbook content updates when NIST publishes new exports.
 
 Out of scope (defer to separate artifacts): rule profiles, framework cross-walks, audit evidence formatters, Playbook full implementation guidance, scoring methodologies.
 
@@ -186,7 +186,7 @@ Adam Lin (`adam@agentthreatrule.org`). This catalog is a personal community cont
 
 ## Abandonment criteria
 
-This catalog is maintained on a best-effort community basis. If schema validation or completeness checks regress on more than one control after generator changes, work pauses until the regression is understood and reverted. v0.4 commits to a shippable state of all 72 controls passing catalog schema validation, four worked-example profiles all passing profile schema validation, completeness checks (including link resolution, tier profile resolution, and profile import resolution), and upstream drift detection.
+This catalog is maintained on a best-effort community basis. If schema validation or completeness checks regress on more than one control after generator changes, work pauses until the regression is understood and reverted. v0.4 commits to a shippable state of all 72 controls passing catalog schema validation, the worked-example profiles all passing profile schema validation, completeness checks (including link resolution, example profile resolution, and profile import resolution), and upstream drift detection.
 
 ## Acknowledgments
 

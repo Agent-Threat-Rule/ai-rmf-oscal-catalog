@@ -2,9 +2,9 @@
   "profile": {
     "uuid": "fbf184b9-7b07-5d86-b6d6-76f51ef53777",
     "metadata": {
-      "title": "AI RMF Tier 2 Customer-Facing Profile (community example)",
-      "last-modified": "2026-05-10T16:05:29.000Z",
-      "version": "0.4.0",
+      "title": "AI RMF Example Profile 2 - 55-control subset (community example)",
+      "last-modified": "2026-07-10T09:41:16.000Z",
+      "version": "0.5.0",
       "oscal-version": "1.2.2",
       "parties": [
         {
@@ -14,7 +14,7 @@
           "remarks": "Community contributors to the ai-rmf-oscal-catalog project. Not produced by, endorsed by, or affiliated with NIST."
         }
       ],
-      "remarks": "Tier 2 — Customer-facing worked example. Selects 55 controls (Tier 1 plus 37 additions). Designed for AI systems whose outputs reach external customers or end-users. Adds controls for fairness and bias evaluation, explainability and interpretability, privacy risk, accountability and transparency, post-deployment monitoring, continual improvement, third-party accountability, and external feedback mechanisms. Excludes specialised controls that are contextually specific (e.g., environmental impact MEASURE 2.12, deep third-party contingency GOVERN 6.2, unknown-risk recovery MANAGE 2.3, human-subjects-protection MEASURE 2.2). This is a worked example, not a normative baseline. Released under CC0 1.0. Not endorsed by NIST."
+      "remarks": "Worked example profile selecting 55 of the 72 AI RMF subcategory controls (the 18 controls of example 1 plus 37 additions). It illustrates a broader selection for AI systems whose outputs reach external users: fairness and bias evaluation, explainability and interpretability, privacy risk, accountability and transparency, post-deployment monitoring, continual improvement, third-party accountability, and external feedback mechanisms. It excludes a small set of context-specific controls (for example environmental-impact MEASURE 2.12, deep third-party contingency GOVERN 6.2, unknown-risk recovery MANAGE 2.3, human-subjects-protection MEASURE 2.2). This is one community-authored worked example, not a normative baseline and not an official tier. Released under CC0 1.0. Not produced by, endorsed by, or affiliated with NIST."
     },
     "imports": [
       {

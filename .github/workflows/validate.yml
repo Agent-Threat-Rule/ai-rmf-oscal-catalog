@@ -31,7 +31,7 @@ jobs:
       - name: Regenerate catalog
         run: python3 src/generator.py
 
-      - name: Regenerate all worked-example profiles
+      - name: Regenerate worked-example profiles
         run: python3 src/profile_generator.py
 
       - name: Regenerate remediation proposals
@@ -48,10 +48,10 @@ jobs:
       - name: OSCAL catalog schema validation
         run: npm run validate-catalog
 
-      - name: OSCAL profile schema validation (all 4 worked-example profiles)
+      - name: OSCAL profile schema validation (both worked-example profiles)
         run: npm run validate-profiles
 
-      - name: Completeness check (catalog + cross-refs + 4 profile imports)
+      - name: Completeness check (catalog + cross-refs + 2 profile imports)
         run: python3 src/completeness_check.py
 
   upstream-drift:

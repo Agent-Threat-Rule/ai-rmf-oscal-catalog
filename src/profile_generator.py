@@ -1,41 +1,35 @@
 """
-AI RMF OSCAL profile generators (v0.4).
+AI RMF OSCAL worked-example profile generators.
 
-Emits four worked-example OSCAL profiles into profiles/, each importing the
-community AI RMF v0.4 catalog. All profiles are released under CC0 1.0 and
-are illustrative — they are not normative AI RMF baselines and have not been
-endorsed by NIST.
+Emits two worked-example OSCAL profiles into profiles/, each importing the
+community AI RMF v0.4 catalog. Both profiles are released under CC0 1.0 and
+are illustrative — they are not normative AI RMF baselines, they are not
+official NIST tiers, and they have not been endorsed by NIST.
 
 Profiles:
 
-    1. ai-rmf-baseline-profile.json
-       The reference profile: 72 controls (include-all), no tier opinion.
-       Useful when a downstream consumer needs the full catalog and wants to
-       derive their own narrower profile from it.
+    1. ai-rmf-example-1-profile.json
+       18 of the 72 controls. One reasonable minimum selection for low-risk,
+       internal AI use: foundational governance, basic context mapping,
+       essential measurement, and minimum risk treatment.
 
-    2. ai-rmf-tier-1-foundational-profile.json (NEW in v0.4)
-       18 controls. Designed as the minimum viable AI risk management
-       baseline: foundational governance, basic safety mapping, essential
-       incident response. Suitable for internal, low-risk AI use (e.g.,
-       internal-only content tools, low-stakes prediction models with human
-       oversight).
+    2. ai-rmf-example-2-profile.json
+       55 of the 72 controls (example 1 plus 37 additions). A broader
+       selection for AI whose outputs reach external users: fairness,
+       explainability, privacy, post-deployment monitoring, third-party
+       accountability, and external feedback.
 
-    3. ai-rmf-tier-2-customer-facing-profile.json (NEW in v0.4)
-       55 controls. Tier 1 plus the controls relevant when AI is deployed
-       to external customers or end-users: fairness, explainability,
-       privacy, post-deployment monitoring, third-party accountability.
+A deployment that wants the entire catalog does not need a dedicated profile —
+it imports the catalog directly or uses an include-all selection — so no
+select-all profile is shipped.
 
-    4. ai-rmf-tier-3-high-risk-profile.json (NEW in v0.4)
-       72 controls (include-all), with high-risk-specific remarks. Designed
-       for AI in regulated or safety-critical contexts (healthcare, finance,
-       government, infrastructure). Same control selection as the baseline
-       profile but with explicit narrative on why the full catalog applies.
-
-Selection rationale for Tier 1 and Tier 2 is documented in each profile's
-`remarks` field and in profiles/TIER_RATIONALE.md.
+Selection rationale for each example is documented in the profile's `remarks`
+field and in profiles/EXAMPLES_RATIONALE.md.
 
 UUIDs are deterministic uuid5 from the project namespace so that regeneration
-produces byte-stable output.
+produces byte-stable output. The uuid5 seeds are retained verbatim from the
+pre-rename artifacts so that each profile keeps a stable UUID across the
+rename.
 
 Usage:
     python3 src/profile_generator.py
@@ -69,14 +63,13 @@ def control_id(function: str, subcat: str) -> str:
 
 
 # ---------------------------------------------------------------------
-# Tier selections
+# Example selections
 # ---------------------------------------------------------------------
 
-# Tier 1 (foundational baseline): 18 controls.
-# Selection criteria: foundational governance + basic safety + essential
-# incident response. Every AI system, regardless of deployment context,
-# benefits from these controls.
-TIER_1_CONTROLS = [
+# Example 1: 18 controls.
+# One reasonable minimum selection for low-risk, internal AI use — foundational
+# governance + basic safety + essential incident response.
+EXAMPLE_1_CONTROLS = [
     # GOVERN — minimum governance scaffolding
     control_id("GOVERN", "1.1"),  # Legal and regulatory requirements
     control_id("GOVERN", "1.2"),  # Trustworthy AI characteristics integrated
@@ -100,15 +93,15 @@ TIER_1_CONTROLS = [
     control_id("MANAGE", "1.3"),  # Risk responses developed and documented
     control_id("MANAGE", "4.3"),  # Incidents communicated to AI actors
 ]
-assert len(TIER_1_CONTROLS) == 18, f"Tier 1 expected 18 controls, got {len(TIER_1_CONTROLS)}"
+assert len(EXAMPLE_1_CONTROLS) == 18, f"Example 1 expected 18 controls, got {len(EXAMPLE_1_CONTROLS)}"
 
-# Tier 2 (customer-facing): 45 controls.
-# Selection criteria: Tier 1 plus the controls that become operationally
-# essential when AI outputs reach external users — fairness, explainability,
-# privacy, accountability, post-deployment monitoring, third-party-related.
-# Excludes specialised controls (e.g., MEASURE 2.12 environmental impact,
-# GOVERN 6.x deep third-party governance) that are contextually specific.
-TIER_2_CONTROLS = sorted(set(TIER_1_CONTROLS) | {
+# Example 2: 55 controls.
+# Example 1 plus the controls that become operationally essential when AI
+# outputs reach external users — fairness, explainability, privacy,
+# accountability, post-deployment monitoring, third-party-related. Excludes
+# specialised controls (e.g., MEASURE 2.12 environmental impact, GOVERN 6.x
+# deep third-party governance) that are contextually specific.
+EXAMPLE_2_CONTROLS = sorted(set(EXAMPLE_1_CONTROLS) | {
     # GOVERN additions: training, ethics, third-party basics
     control_id("GOVERN", "1.3"),  # Risk tolerance levels
     control_id("GOVERN", "1.4"),  # Risk priorities through transparent policies
@@ -151,7 +144,7 @@ TIER_2_CONTROLS = sorted(set(TIER_1_CONTROLS) | {
     control_id("MANAGE", "4.1"),  # Post-deployment monitoring plans
     control_id("MANAGE", "4.2"),  # Continual improvements integrated
 })
-assert len(TIER_2_CONTROLS) == 55, f"Tier 2 expected 55 controls, got {len(TIER_2_CONTROLS)}"
+assert len(EXAMPLE_2_CONTROLS) == 55, f"Example 2 expected 55 controls, got {len(EXAMPLE_2_CONTROLS)}"
 
 
 # ---------------------------------------------------------------------
@@ -190,8 +183,7 @@ def build_profile(*,
                   remarks: str) -> dict:
     """Builds one OSCAL profile document.
 
-    `selection` is a dict like {"include-all": {}} or
-    {"include-controls": [{"with-ids": [...]}]}.
+    `selection` is a dict like {"include-controls": [{"with-ids": [...]}]}.
     """
     out_path = OUT_DIR / filename
     catalog_resource_uuid = stable_uuid(resource_uuid_seed)
@@ -202,7 +194,7 @@ def build_profile(*,
         "metadata": {
             "title": title,
             "last-modified": "PLACEHOLDER",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "oscal-version": "1.2.2",
             "parties": [
                 {
@@ -263,90 +255,73 @@ def write(out_path: Path, document: dict) -> None:
 
 
 # ---------------------------------------------------------------------
-# Profile-specific remarks
+# Profile-specific remarks (no tier / foundational / customer-facing taxonomy)
 # ---------------------------------------------------------------------
 
-REMARKS_BASELINE = (
-    "Reference profile that imports the community AI RMF v0.4 catalog and "
-    "selects all 72 subcategory controls (include-all). This profile is the "
-    "simplest valid pattern, useful when a downstream consumer needs the "
-    "complete catalog as a single profile and intends to derive a narrower "
-    "selection by adding `exclude-controls` entries. It does not impose any "
-    "tier opinion on the controls. Released under CC0 1.0. Not endorsed by NIST."
+REMARKS_EXAMPLE_1 = (
+    "Worked example profile selecting 18 of the 72 AI RMF subcategory controls. "
+    "It illustrates one reasonable minimum selection for low-risk, internal AI "
+    "use: foundational governance (legal compliance, executive accountability, "
+    "trustworthy-AI integration, AI inventory, role definitions, safety culture, "
+    "incident sharing), minimum context mapping (intended purposes, task "
+    "definition, human oversight, impact identification), minimum measurement "
+    "(metric selection, TEVV documentation, safety and security evaluation), and "
+    "minimum risk treatment (proceed / no-go determination, risk responses, "
+    "incident communication). This is one community-authored worked example, not "
+    "a normative baseline and not an official tier. Released under CC0 1.0. Not "
+    "produced by, endorsed by, or affiliated with NIST."
 )
 
-REMARKS_TIER_1 = (
-    "Tier 1 — Foundational worked example. Selects 18 controls covering the "
-    "minimum viable AI risk management surface for low-risk, internal AI use. "
-    "Includes foundational governance (legal compliance, executive accountability, "
-    "trustworthy AI integration, AI inventory, role definitions, safety culture, "
-    "incident sharing); minimum context mapping (intended purposes, task "
-    "definition, human oversight, impact identification); minimum measurement "
-    "(metric selection, TEVV documentation, safety and security evaluation); "
-    "and minimum risk treatment (proceed/no-go determination, risk responses, "
-    "incident communication). This is a worked example, not a normative "
-    "baseline. Released under CC0 1.0. Not endorsed by NIST."
-)
-
-REMARKS_TIER_2 = (
-    "Tier 2 — Customer-facing worked example. Selects 55 controls (Tier 1 "
-    "plus 37 additions). Designed for AI systems whose outputs reach external "
-    "customers or end-users. Adds controls for fairness and bias evaluation, "
-    "explainability and interpretability, privacy risk, accountability and "
-    "transparency, post-deployment monitoring, continual improvement, "
-    "third-party accountability, and external feedback mechanisms. Excludes "
-    "specialised controls that are contextually specific (e.g., environmental "
-    "impact MEASURE 2.12, deep third-party contingency GOVERN 6.2, unknown-risk "
-    "recovery MANAGE 2.3, human-subjects-protection MEASURE 2.2). This is a "
-    "worked example, not a normative baseline. Released under CC0 1.0. Not "
-    "endorsed by NIST."
-)
-
-REMARKS_TIER_3 = (
-    "Tier 3 — High-risk worked example. Selects all 72 controls (include-all) "
-    "with the explicit framing that AI in regulated or safety-critical "
-    "contexts (healthcare, finance, government, infrastructure, autonomous "
-    "transport) requires the full AI RMF surface area. Differs from the "
-    "baseline profile only in narrative framing. The same selection (all "
-    "72 controls) but with the explicit position that exclusions are not "
-    "appropriate for high-risk deployment contexts. This is a worked example, "
-    "not a normative baseline. Released under CC0 1.0. Not endorsed by NIST."
+REMARKS_EXAMPLE_2 = (
+    "Worked example profile selecting 55 of the 72 AI RMF subcategory controls "
+    "(the 18 controls of example 1 plus 37 additions). It illustrates a broader "
+    "selection for AI systems whose outputs reach external users: fairness and "
+    "bias evaluation, explainability and interpretability, privacy risk, "
+    "accountability and transparency, post-deployment monitoring, continual "
+    "improvement, third-party accountability, and external feedback mechanisms. "
+    "It excludes a small set of context-specific controls (for example "
+    "environmental-impact MEASURE 2.12, deep third-party contingency GOVERN 6.2, "
+    "unknown-risk recovery MANAGE 2.3, human-subjects-protection MEASURE 2.2). "
+    "This is one community-authored worked example, not a normative baseline and "
+    "not an official tier. Released under CC0 1.0. Not produced by, endorsed by, "
+    "or affiliated with NIST."
 )
 
 
 # ---------------------------------------------------------------------
-# Tier rationale doc
+# Examples rationale doc
 # ---------------------------------------------------------------------
 
-TIER_RATIONALE_MD = """# AI RMF profile tiers — selection rationale
+EXAMPLES_RATIONALE_MD = """# AI RMF worked-example profiles — selection rationale
 
-This document accompanies the four worked-example OSCAL profiles in
-`profiles/`. It describes how each tier was constructed and why specific
-controls were selected or excluded.
+This document accompanies the two worked-example OSCAL profiles in `profiles/`.
+It describes how each example selects controls from the community AI RMF v0.4
+catalog and why specific subcategories were included or excluded.
 
-These profiles are illustrative worked examples. They are not normative AI
-RMF baselines, and they have not been endorsed by NIST. Downstream consumers
-should derive their own profiles based on the specific risk posture and
-deployment context of their AI system.
+These profiles are illustrative worked examples. They are not normative AI RMF
+baselines, they are not official NIST tiers, and they have not been endorsed by
+NIST. Downstream consumers should derive their own profiles based on the
+specific risk posture and deployment context of their AI system.
 
-## Tiering principles
+## Why two examples
 
-The AI RMF Core does not prescribe tiering — every subcategory is presented
-as universally applicable, and the framework is explicitly designed to be
-applied with the rigour that matches the context. These worked examples take
-that principle and make three illustrative tiering choices a deploying
-organisation might reasonably make:
+The AI RMF Core does not prescribe any grading or tiering — every subcategory is
+presented as universally applicable, and the framework is explicitly designed to
+be applied with the rigour that matches the context. These two examples simply
+show two points on the spectrum of how much of the catalog a given deployment
+might reasonably select, expressed purely as control counts:
 
-- **Tier 1 (Foundational):** the minimum viable surface for low-risk
-  internal AI use. Below this, the controls left out are unlikely to be
-  meaningful in the deployed context.
-- **Tier 2 (Customer-Facing):** the operationally essential surface when AI
-  outputs reach external users — adds fairness, explainability, privacy,
-  accountability, post-deployment monitoring, and third-party concerns.
-- **Tier 3 (High-Risk):** the full catalog, framed for regulated or
-  safety-critical contexts where exclusions are not appropriate.
+- Example 1 (18 of 72 controls): one reasonable minimum selection for a low-risk,
+  internal AI use.
+- Example 2 (55 of 72 controls): a broader selection for AI whose outputs reach
+  external users.
 
-## Tier 1 (18 controls)
+A deployment that wants the entire catalog does not need a dedicated profile: it
+can import the catalog directly or use an `include-all` selection. A regulated or
+safety-critical context is the natural case for exactly that — apply the full
+catalog with no exclusions — so no separate select-all profile is shipped.
+
+## Example 1 (18 controls)
 
 GOVERN (7): 1.1, 1.2, 1.6, 2.1, 2.3, 4.1, 4.3
 MAP (4): 1.1, 2.1, 3.5, 5.1
@@ -366,10 +341,10 @@ Selection rationale:
 - MEASURE minimum: metric selection (1.1), TEVV documentation (2.1), safety
   evaluation (2.6), security and resilience (2.7) — without these, the
   organisation cannot verify the system is performing as intended.
-- MANAGE minimum: proceed/no-go determination (1.1), risk responses (1.3),
+- MANAGE minimum: proceed / no-go determination (1.1), risk responses (1.3),
   incident communication (4.3) — minimum operational risk handling.
 
-## Tier 2 (55 controls = Tier 1 + 37 additions)
+## Example 2 (55 controls = Example 1 + 37 additions)
 
 Adds 37 controls covering:
 
@@ -391,37 +366,25 @@ Adds 37 controls covering:
   (2.4), third-party monitoring (3.1), post-deployment monitoring (4.1), and
   continual improvement (4.2).
 
-Excluded from Tier 2 (17 controls):
+Excluded from Example 2 (17 controls):
 
-- GOVERN 6.2 (third-party contingency processes) — relevant only when
-  high-risk third-party systems are in scope.
-- MAP 1.4 (business value), MAP 1.5 (risk tolerance specific), MAP 3.1
-  (benefits) [moved to T2], MAP 3.2 (cost analysis), MAP 3.3 (application
-  scope), MAP 3.4 (operator proficiency) — depth-specialised aspects of
-  context establishment.
-- MEASURE 1.2 (metric appropriateness), 1.3 (internal experts), 2.2 (human
-  subjects), 2.12 (environmental impact), 2.13 (TEVV effectiveness), 3.2
-  (settings without measurement), 4.1-4.3 (measurement-of-measurement
-  feedback) — measurement-of-measurement and contextually specific.
-- MANAGE 2.3 (recover from previously unknown risk), MANAGE 3.2 (pre-trained
-  model monitoring) — specialised operational controls.
-
-## Tier 3 (72 controls)
-
-Identical control selection to the baseline profile (include-all). The
-distinction is narrative: Tier 3 is framed for regulated or safety-critical
-deployment contexts where exclusions from the catalog are not appropriate.
+The 17 controls left out are contextually specific — meaningful only in
+particular deployment settings rather than for external-facing AI in general.
+Representative exclusions: environmental-impact MEASURE 2.12, deep third-party
+contingency GOVERN 6.2, unknown-risk recovery MANAGE 2.3, and human-subjects
+protection MEASURE 2.2. The remainder are measurement-of-measurement
+subcategories and depth-specialised aspects of context establishment. A
+deployment for which any of these is in scope should add it back explicitly.
 
 ## Reproducibility
 
-All four profiles are generated from `src/profile_generator.py`. Re-running
-that script produces byte-identical output (UUIDs are deterministic uuid5
-from the project namespace; `last-modified` is preserved when content is
-unchanged).
+Both profiles are generated from `src/profile_generator.py`. Re-running that
+script produces byte-identical output (UUIDs are deterministic uuid5 from the
+project namespace; `last-modified` is preserved when content is unchanged).
 
-Validate any profile against the OSCAL profile schema:
+Validate the profiles against the OSCAL profile schema:
 
-    python3 src/validate_profiles.py
+    npm run validate-profiles
     python3 src/completeness_check.py
 """
 
@@ -433,62 +396,38 @@ Validate any profile against the OSCAL profile schema:
 def main() -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # 1) Baseline (existing, refreshed)
-    baseline = build_profile(
-        filename="ai-rmf-baseline-profile.json",
-        profile_uuid_seed="profile:ai-rmf-baseline-v0.4",
-        resource_uuid_seed="profile-catalog-resource:ai-rmf-v0.4",
-        party_uuid_seed="profile-party:community",
-        title="AI RMF Baseline Profile (community example)",
-        selection={"include-all": {}},
-        remarks=REMARKS_BASELINE,
-    )
-    write(OUT_DIR / "ai-rmf-baseline-profile.json", baseline)
-
-    # 2) Tier 1 — foundational (18 controls)
-    tier_1 = build_profile(
-        filename="ai-rmf-tier-1-foundational-profile.json",
+    # 1) Example 1 (18 controls). UUID seed retained from the pre-rename
+    #    artifact so the profile keeps a stable UUID across the rename.
+    example_1 = build_profile(
+        filename="ai-rmf-example-1-profile.json",
         profile_uuid_seed="profile:ai-rmf-tier-1-foundational-v0.4",
         resource_uuid_seed="profile-catalog-resource:ai-rmf-v0.4",
         party_uuid_seed="profile-party:community",
-        title="AI RMF Tier 1 Foundational Profile (community example)",
-        selection={"include-controls": [{"with-ids": TIER_1_CONTROLS}]},
-        remarks=REMARKS_TIER_1,
+        title="AI RMF Example Profile 1 - 18-control subset (community example)",
+        selection={"include-controls": [{"with-ids": EXAMPLE_1_CONTROLS}]},
+        remarks=REMARKS_EXAMPLE_1,
     )
-    write(OUT_DIR / "ai-rmf-tier-1-foundational-profile.json", tier_1)
+    write(OUT_DIR / "ai-rmf-example-1-profile.json", example_1)
 
-    # 3) Tier 2 — customer-facing (45 controls)
-    tier_2 = build_profile(
-        filename="ai-rmf-tier-2-customer-facing-profile.json",
+    # 2) Example 2 (55 controls). UUID seed retained from the pre-rename
+    #    artifact so the profile keeps a stable UUID across the rename.
+    example_2 = build_profile(
+        filename="ai-rmf-example-2-profile.json",
         profile_uuid_seed="profile:ai-rmf-tier-2-customer-facing-v0.4",
         resource_uuid_seed="profile-catalog-resource:ai-rmf-v0.4",
         party_uuid_seed="profile-party:community",
-        title="AI RMF Tier 2 Customer-Facing Profile (community example)",
-        selection={"include-controls": [{"with-ids": TIER_2_CONTROLS}]},
-        remarks=REMARKS_TIER_2,
+        title="AI RMF Example Profile 2 - 55-control subset (community example)",
+        selection={"include-controls": [{"with-ids": EXAMPLE_2_CONTROLS}]},
+        remarks=REMARKS_EXAMPLE_2,
     )
-    write(OUT_DIR / "ai-rmf-tier-2-customer-facing-profile.json", tier_2)
+    write(OUT_DIR / "ai-rmf-example-2-profile.json", example_2)
 
-    # 4) Tier 3 — high-risk (72 controls, include-all with high-risk framing)
-    tier_3 = build_profile(
-        filename="ai-rmf-tier-3-high-risk-profile.json",
-        profile_uuid_seed="profile:ai-rmf-tier-3-high-risk-v0.4",
-        resource_uuid_seed="profile-catalog-resource:ai-rmf-v0.4",
-        party_uuid_seed="profile-party:community",
-        title="AI RMF Tier 3 High-Risk Profile (community example)",
-        selection={"include-all": {}},
-        remarks=REMARKS_TIER_3,
-    )
-    write(OUT_DIR / "ai-rmf-tier-3-high-risk-profile.json", tier_3)
+    # 3) Examples rationale doc
+    (OUT_DIR / "EXAMPLES_RATIONALE.md").write_text(EXAMPLES_RATIONALE_MD)
 
-    # 5) Tier rationale doc
-    (OUT_DIR / "TIER_RATIONALE.md").write_text(TIER_RATIONALE_MD)
-
-    print(f"wrote {OUT_DIR}/ai-rmf-baseline-profile.json (72 controls, include-all)")
-    print(f"wrote {OUT_DIR}/ai-rmf-tier-1-foundational-profile.json ({len(TIER_1_CONTROLS)} controls)")
-    print(f"wrote {OUT_DIR}/ai-rmf-tier-2-customer-facing-profile.json ({len(TIER_2_CONTROLS)} controls)")
-    print(f"wrote {OUT_DIR}/ai-rmf-tier-3-high-risk-profile.json (72 controls, include-all)")
-    print(f"wrote {OUT_DIR}/TIER_RATIONALE.md")
+    print(f"wrote {OUT_DIR}/ai-rmf-example-1-profile.json ({len(EXAMPLE_1_CONTROLS)} controls)")
+    print(f"wrote {OUT_DIR}/ai-rmf-example-2-profile.json ({len(EXAMPLE_2_CONTROLS)} controls)")
+    print(f"wrote {OUT_DIR}/EXAMPLES_RATIONALE.md")
     return 0
 
 

@@ -2,9 +2,9 @@
   "profile": {
     "uuid": "4e7131ef-207a-5627-b249-65545f110e37",
     "metadata": {
-      "title": "AI RMF Tier 1 Foundational Profile (community example)",
-      "last-modified": "2026-05-10T16:05:29.000Z",
-      "version": "0.4.0",
+      "title": "AI RMF Example Profile 1 - 18-control subset (community example)",
+      "last-modified": "2026-07-10T09:41:16.000Z",
+      "version": "0.5.0",
       "oscal-version": "1.2.2",
       "parties": [
         {
@@ -14,7 +14,7 @@
           "remarks": "Community contributors to the ai-rmf-oscal-catalog project. Not produced by, endorsed by, or affiliated with NIST."
         }
       ],
-      "remarks": "Tier 1 — Foundational worked example. Selects 18 controls covering the minimum viable AI risk management surface for low-risk, internal AI use. Includes foundational governance (legal compliance, executive accountability, trustworthy AI integration, AI inventory, role definitions, safety culture, incident sharing); minimum context mapping (intended purposes, task definition, human oversight, impact identification); minimum measurement (metric selection, TEVV documentation, safety and security evaluation); and minimum risk treatment (proceed/no-go determination, risk responses, incident communication). This is a worked example, not a normative baseline. Released under CC0 1.0. Not endorsed by NIST."
+      "remarks": "Worked example profile selecting 18 of the 72 AI RMF subcategory controls. It illustrates one reasonable minimum selection for low-risk, internal AI use: foundational governance (legal compliance, executive accountability, trustworthy-AI integration, AI inventory, role definitions, safety culture, incident sharing), minimum context mapping (intended purposes, task definition, human oversight, impact identification), minimum measurement (metric selection, TEVV documentation, safety and security evaluation), and minimum risk treatment (proceed / no-go determination, risk responses, incident communication). This is one community-authored worked example, not a normative baseline and not an official tier. Released under CC0 1.0. Not produced by, endorsed by, or affiliated with NIST."
     },
     "imports": [
       {
