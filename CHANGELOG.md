@@ -7,6 +7,37 @@ catalog version follows [Semantic Versioning](https://semver.org/) where
 and "PATCH" tracks corrections that do not change the set of controls or
 their statement text.
 
+## [0.5.0] - 2026-07-10
+
+Profile rework in response to review feedback from the NIST OSCAL project lead
+on [usnistgov/oscal-content#338](https://github.com/usnistgov/oscal-content/pull/338).
+No catalog change — the catalog stays at v0.4.
+
+### Removed
+
+- `profiles/ai-rmf-baseline-profile.json` and
+  `profiles/ai-rmf-tier-3-high-risk-profile.json`. Both selected all 72
+  controls (`include-all`), which resolves to the catalog itself and adds no
+  tailoring. The high-risk guidance (for regulated or safety-critical contexts,
+  apply the full catalog with no exclusions) is now captured in prose in
+  `profiles/EXAMPLES_RATIONALE.md` rather than shipped as a redundant artifact.
+
+### Changed
+
+- Renamed `profiles/ai-rmf-tier-1-foundational-profile.json` to
+  `profiles/ai-rmf-example-1-profile.json` and
+  `profiles/ai-rmf-tier-2-customer-facing-profile.json` to
+  `profiles/ai-rmf-example-2-profile.json`, removing naming that implied an
+  official NIST tiering (foundational, customer-facing) that does not exist.
+  The 18-control and 55-control selections are unchanged; the existing profile
+  UUIDs are retained as stable identifiers; profile `version` bumped to 0.5.0.
+- Renamed `profiles/TIER_RATIONALE.md` to `profiles/EXAMPLES_RATIONALE.md` and
+  rewrote it to describe the two worked examples by control count and intent,
+  with no tier taxonomy.
+- Updated `README.md`, `package.json` validation scripts,
+  `src/profile_generator.py`, and `src/completeness_check.py` to reference the
+  two example profiles.
+
 ## [0.4.0] - 2026-05-11
 
 ### Added
